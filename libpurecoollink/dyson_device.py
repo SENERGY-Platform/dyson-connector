@@ -88,7 +88,6 @@ class DysonDevice:
 
     def __init__(self, json_body):
         """Create a new Dyson device.
-
         :param json_body: JSON message returned by the HTTPS API
         """
         self._active = json_body['Active']

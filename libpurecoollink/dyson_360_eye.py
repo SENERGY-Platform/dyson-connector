@@ -31,6 +31,7 @@ class Dyson360Eye(DysonDevice):
         self._mqtt.username_pw_set(self._serial, self._credentials)
         self._mqtt.on_message = self.on_message
         self._mqtt.on_connect = self.on_connect
+        self._mqtt.on_disconnect = self.on_disconnect
         self._mqtt.connect(self._network_device.address,
                            self._network_device.port)
         self._mqtt.loop_start()
