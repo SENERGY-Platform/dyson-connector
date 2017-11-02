@@ -78,6 +78,14 @@ class DysonDevice:
                           MQTT_RETURN_CODES[return_code])
             userdata.connection_callback(False)
 
+    @staticmethod
+    def on_disconnect(client, userdata, flags, return_code):
+        # pylint: disable=unused-argument
+        """Set function callback when disconnected."""
+        _LOGGER.error("Connection error: %s", MQTT_RETURN_CODES[return_code])
+        client.loop_stop()
+        __class__._connected = False
+
     def __init__(self, json_body):
         """Create a new Dyson device.
 
