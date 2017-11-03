@@ -23,6 +23,7 @@ class CloudApiMonitor(Thread):
         super().__init__()
         self._dyson_account = DysonAccount(dyson_account_user, dyson_account_pass, "DE")
         self._apiLogin()
+        self._init_sessions = list()
         unknown_devices = self._apiQueryDevices()
         if unknown_devices:
             self._evaluate(unknown_devices, True)
@@ -30,12 +31,14 @@ class CloudApiMonitor(Thread):
 
 
     def run(self):
+        for session in self._init_sessions:
+            session.start()
         while True:
             time.sleep(300)
             self._apiLogin()
             unknown_devices = self._apiQueryDevices()
             if unknown_devices:
-                self._evaluate(unknown_devices, True)
+                self._evaluate(unknown_devices, False)
 
 
     def _apiLogin(self):
@@ -72,8 +75,7 @@ class CloudApiMonitor(Thread):
         missing_devices, new_devices = self._diff(DevicePool.devices(), unknown_devices)
         if missing_devices:
             for missing_device_id in missing_devices:
-                logger.info(
-                    "can't find '{}'".format(missing_device_id))
+                logger.info("can't find '{}'".format(missing_device_id))
                 if init:
                     DevicePool.remove(missing_device_id)
                 else:
@@ -81,5 +83,8 @@ class CloudApiMonitor(Thread):
         if new_devices:
             for new_device_id in new_devices:
                 logger.info("found Dyson device with id '{}'".format(new_device_id))
-                device_session = DeviceSession(unknown_devices[new_device_id])
-                device_session.start()
+                if init:
+                    self._init_sessions.append(DeviceSession(unknown_devices[new_device_id], init))
+                else:
+                    device_session = DeviceSession(unknown_devices[new_device_id], init)
+                    device_session.start()

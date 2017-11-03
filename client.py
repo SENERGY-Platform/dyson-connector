@@ -20,13 +20,15 @@ logger = root_logger.getChild(__name__)
 
 def dysonController():
     device = DevicePool.get('NN2-EU-HKA3617A')
-    device.dyson.set_configuration(fan_mode=FanMode.FAN, fan_speed=FanSpeed.FAN_SPEED_3, oscillation=Oscillation.OSCILLATION_OFF)
-    time.sleep(10)
-    device.dyson.set_configuration(fan_mode=FanMode.OFF)
-    logger.info(device.dyson.status_topic)
+    if device:
+        device.dyson.set_configuration(fan_mode=FanMode.FAN, fan_speed=FanSpeed.FAN_SPEED_3, oscillation=Oscillation.OSCILLATION_OFF)
+        time.sleep(10)
+        device.dyson.set_configuration(fan_mode=FanMode.OFF)
+    #while True:
+        #logger.info(device.dyson)
 
 
 if __name__ == '__main__':
     dyson_monitor = CloudApiMonitor()
-    #connector_client = Client(device_manager=DevicePool)
+    connector_client = Client(device_manager=DevicePool)
     dysonController()

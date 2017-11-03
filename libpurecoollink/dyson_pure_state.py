@@ -120,7 +120,7 @@ class DysonEnvironmentalSensorState:
         self._temperature = 0 if temperature == 'OFF' else float(
             temperature) / 10
         dust = self.__get_field_value(data, 'pact')
-        self._dust = 0 if dust == 'INIT' else float(dust)
+        self._dust = 0 if dust == 'INIT' else int(dust)
         sltm = self.__get_field_value(data, 'sltm')
         self._sleep_timer = 0 if sltm == 'OFF' else int(sltm)
 

@@ -101,6 +101,30 @@ class DysonPureCoolLink(DysonDevice):
         else:
             _LOGGER.warning("Unknown message: %s", payload)
 
+    def find_device(self, timeout=5, retries=0) -> NetworkDevice:
+        """
+        Try to find a Dyson device using mDNS.
+        :param timeout:
+        :param retries:
+        :return:
+        """
+        network_device = None
+        zeroconf = Zeroconf()
+        for retry in range(retries+1):
+            listener = self.DysonDeviceListener(self._serial, self._add_network_device)
+            ServiceBrowser(zeroconf, "_dyson_mqtt._tcp.local.", listener)
+            try:
+                network_device = self._search_device_queue.get(timeout=timeout)
+            except Empty:
+                # Unable to find device
+                #_LOGGER.warning("Unable to find device %s, try %s", self._serial, retry)
+                pass
+            else:
+                break
+        zeroconf.close()
+        return network_device
+
+
     def auto_connect(self, timeout=5, retry=15):
         """Try to connect to device using mDNS.
 
@@ -172,9 +196,9 @@ class DysonPureCoolLink(DysonDevice):
         self._sensor_data_available.put_nowait(True)
 
     def disconnect(self):
+        super().disconnect()
         """Disconnect from the device."""
         self._request_thread.stop()
-        self._connected = False
 
     def request_environmental_state(self):
         """Request new state message."""
