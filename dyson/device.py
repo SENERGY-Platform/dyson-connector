@@ -34,3 +34,6 @@ class DysonDevice(Device):
         super().__init__(id, type, name)
         self.credentials = credentials
         self.scale_unit = scale_unit
+
+    def __repr__(self):
+        return super().__repr__(credentials=self.credentials, scale_unit=self.scale_unit)
