@@ -134,6 +134,5 @@ class CloudApiMonitor(Thread):
                             count = 0
                         count = count + 1
                     logger.info("found '{}' with id '{}'".format(dyson_device.name, dyson_device.id))
-                    logger.info(dyson_device)
                 except KeyError:
                     logger.error("missing device data or malformed message - '{}'".format(unknown_devices[new_device_id]))
