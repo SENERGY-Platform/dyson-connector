@@ -59,7 +59,6 @@ class DysonAccount:
                 "https://{0}/v1/provisioningservice/manifest".format(
                     DYSON_API_URL), verify=False, auth=self._auth)
             devices = []
-            print(device_response.json())
             for device in device_response.json():
                 if is_360_eye_device(device):
                     dyson_device = Dyson360Eye(device)

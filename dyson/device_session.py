@@ -2,11 +2,6 @@ try:
     from modules.logger import root_logger
     from modules.device_pool import DevicePool
     from connector.client import Client
-    from connector.device import Device
-    from libpurecoollink.dyson_360_eye import Dyson360Eye
-    from libpurecoollink.dyson_pure_cool_link import DysonPureCoolLink
-    from libpurecoollink.dyson_pure_hotcool_link import DysonPureHotCoolLink
-    from libpurecoollink.dyson_pure_state import DysonPureHotCoolState, DysonPureCoolState, DysonEnvironmentalSensorState
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 import time
@@ -14,28 +9,6 @@ from threading import Thread
 
 
 logger = root_logger.getChild(__name__)
-
-
-dyson_map = {
-    Dyson360Eye: {
-        'name': 'Dyson 360 Eye',
-        'types': ('Vacuum', )
-    },
-    DysonPureCoolLink: {
-        'name': 'Dyson Pure Cool Link',
-        'types': ('Fan', 'Purifier')
-    },
-    DysonPureHotCoolLink: {
-        'name': 'Dyson Pure Hot + Cool Link',
-        'types': ('Fan', 'Heater', 'Purifier')
-    }
-}
-
-
-class DeviceWrapper(Device):
-    def __init__(self, id, type, name, dyson_obj):
-        super().__init__(id, type, name)
-        self.dyson = dyson_obj
 
 
 class DeviceSession(Thread):

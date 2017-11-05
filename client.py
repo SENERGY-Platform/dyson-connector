@@ -29,36 +29,6 @@ def dysonController():
 
 
 if __name__ == '__main__':
-    #dyson_monitor = CloudApiMonitor()
+    dyson_monitor = CloudApiMonitor()
     #connector_client = Client(device_manager=DevicePool)
     #dysonController()
-
-    from modules.http_lib import Methods as http
-    import json
-
-    dyson_account_user = 'smart.energy.platform@gmail.com'
-    dyson_account_pass = 'connector1!'
-
-    DYSON_API_URL = "api.cp.dyson.com"
-
-    body = {
-        "Email": dyson_account_user,
-        "Password": dyson_account_pass
-    }
-
-    http_resp = http.post(
-        "https://api.cp.dyson.com/v1/userregistration/authenticate?country=DE",
-        json.dumps(body),
-        headers={'Content-Type': 'application/json'}
-    )
-
-    credentials = json.loads(http_resp.body)
-    credentials = (credentials.get('Account'), credentials.get('Password'))
-
-    http_resp = http.get(
-        "https://api.cp.dyson.com/v1/provisioningservice/manifest",
-        auth=credentials
-    )
-
-    logger.info(http_resp.body)
-    logger.info(http_resp.header)
