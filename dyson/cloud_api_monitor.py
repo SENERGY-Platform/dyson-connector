@@ -5,33 +5,14 @@ try:
     from modules.http_lib import Methods as http
     from dyson.configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY, DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW, writeConf
     from dyson.device import DysonDevice, dyson_map
+    from libpurecoollink.utils import decrypt_password
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 import time, json
 from threading import Thread
-import base64
-from Crypto.Cipher import AES
 
 
 logger = root_logger.getChild(__name__)
-
-
-def unpad(string):
-    """Un pad string."""
-    return string[:-ord(string[len(string) - 1:])]
-
-def decryptPassword(encrypted_password):
-    """Decrypt password.
-
-    :param encrypted_password: Encrypted password
-    """
-    key = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10' \
-          b'\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f '
-    init_vector = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
-                  b'\x00\x00\x00\x00'
-    cipher = AES.new(key, AES.MODE_CBC, init_vector)
-    json_password = json.loads(unpad(cipher.decrypt(base64.b64decode(encrypted_password)).decode('utf-8')))
-    return json_password["apPasswordHash"]
 
 
 class CloudApiMonitor(Thread):
@@ -118,7 +99,7 @@ class CloudApiMonitor(Thread):
             for new_device_id in new_devices:
                 try:
                     dyson_data = dyson_map[unknown_devices[new_device_id]['ProductType']]
-                    device_credentials = decryptPassword(unknown_devices[new_device_id]['LocalCredentials'])
+                    device_credentials = decrypt_password(unknown_devices[new_device_id]['LocalCredentials'])
                     dyson_device = DysonDevice(
                         new_device_id,
                         dyson_data['type'],
