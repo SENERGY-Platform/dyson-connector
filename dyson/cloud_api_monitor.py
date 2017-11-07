@@ -1,10 +1,11 @@
 try:
     from modules.logger import root_logger
-    from connector.client import Client
-    from modules.device_pool import DevicePool
     from modules.http_lib import Methods as http
-    from dyson.configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY, DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW, writeConf
+    from modules.device_pool import DevicePool
+    from connector.client import Client
+    from dyson.cloud_api_configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY, DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW, writeConf
     from dyson.device import DysonDevice, dyson_map
+    from dyson.session import SessionManager
     from libpurecoollink.utils import decrypt_password
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
@@ -19,13 +20,14 @@ class CloudApiMonitor(Thread):
     def __init__(self):
         super().__init__()
         self._init_sessions = list()
+        self._know_devices = list()
         if not (DYSON_CLOUD_API_USER and DYSON_CLOUD_API_PW):
             while not self._getApiCredentials():
                 logger.info("retry in 30s")
                 time.sleep(30)
         unknown_devices = self._apiQueryDevices()
         if unknown_devices:
-            self._evaluate(unknown_devices, True)
+            self._evaluate(unknown_devices)
         self.start()
 
 
@@ -36,7 +38,7 @@ class CloudApiMonitor(Thread):
             time.sleep(300)
             unknown_devices = self._apiQueryDevices()
             if unknown_devices:
-                self._evaluate(unknown_devices, False)
+                self._evaluate(unknown_devices)
 
 
     def _getApiCredentials(self):
@@ -86,15 +88,16 @@ class CloudApiMonitor(Thread):
         return missing, new
 
 
-    def _evaluate(self, unknown_devices, init):
-        missing_devices, new_devices = self._diff(DevicePool.devices(), unknown_devices)
+    def _evaluate(self, unknown_devices):
+        missing_devices, new_devices = self._diff(self._know_devices, unknown_devices)
         if missing_devices:
             for missing_device_id in missing_devices:
                 logger.info("can't find '{}'".format(missing_device_id))
-                if init:
-                    DevicePool.remove(missing_device_id)
-                else:
+                try:
                     Client.delete(missing_device_id)
+                except AttributeError:
+                    DevicePool.remove(missing_device_id)
+                SessionManager.delRemoteDevice(missing_device_id)
         if new_devices:
             for new_device_id in new_devices:
                 try:
@@ -115,5 +118,7 @@ class CloudApiMonitor(Thread):
                             count = 0
                         count = count + 1
                     logger.info("found '{}' with id '{}'".format(dyson_device.name, dyson_device.id))
+                    SessionManager.addRemoteDevice(dyson_device)
                 except KeyError:
                     logger.error("missing device data or malformed message - '{}'".format(unknown_devices[new_device_id]))
+        self._know_devices = unknown_devices.keys()
