@@ -18,6 +18,7 @@ class ServiceListener:
     def add_service(self, zeroconf, type, name):
         info = zeroconf.get_service_info(type, name)
         logger.debug("service {} added, service info: {}".format(name, info))
+        logger.info("found local device with id '{}'".format(info.name.split(".")[0].split("_")[1]))
         SessionManager.addLocalDevice(info.name.split(".")[0].split("_")[1], convert32bitToIp(info.address), info.port)
 
 
