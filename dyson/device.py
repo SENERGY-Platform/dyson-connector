@@ -9,15 +9,36 @@ import json
 logger = root_logger.getChild(__name__)
 
 
+dyson_map = {
+    '455': {
+        'name': 'Dyson Pure Hot + Cool Link',
+        'type': '',
+        'tags': ('Fan', 'Heater', 'Purifier')
+    },
+    '469': {
+        'name': 'Dyson Pure Cool Link Desk',
+        'type': '',
+        'tags': ('Fan', 'Purifier')
+    },
+    '475': {
+        'name': 'Dyson Pure Cool Link',
+        'type': 'iot#2b7534de-c2d9-4f5c-a6a0-9e3b21a09f02',
+        'tags': ('Fan', 'Purifier')
+    }
+}
+
+
+
 class DysonDevice(Device):
     def __init__(self, id, type, name, credentials, p_type, s_unit):
         super().__init__(id, type, name)
         self.credentials = credentials
         self.scale_unit = s_unit
         self.product_type = p_type
+        self.state = None
         self.addTag('manufacturer', 'Dyson')
 
-    def getEnvironmentSensors(self, data) -> list:
+    def parseEnvironmentSensors(self, data) -> list:
         readings = list()
         time = data.get('time')
         data = data.get('data')
@@ -35,34 +56,9 @@ class DysonDevice(Device):
             readings.append(('dust service', dust, time))
         return readings
 
+    def updateState(self, data):
+        for state, value in data.items():
+            self.state[state] = value[1]
+
     def __repr__(self):
-        return super().__repr__(credentials=self.credentials, scale_unit=self.scale_unit)
-
-
-class DysonPureHotCoolLink(DysonDevice):
-    def __init__(self, id, credentials, p_type, s_unit):
-        super().__init__(id, '', 'Dyson Pure Hot + Cool Link', credentials, p_type, s_unit)
-        self.addTag('type', 'Fan')
-        self.addTag('type1', 'Heater')
-        self.addTag('type2', 'Purifier')
-
-
-class DysonPureCooLinkDesk(DysonDevice):
-    def __init__(self, id, credentials, p_type, s_unit):
-        super().__init__(id, '', 'Dyson Pure Cool Link Desk', credentials, p_type, s_unit)
-        self.addTag('type', 'Fan')
-        self.addTag('type1', 'Purifier')
-
-
-class DysonPureCoolLink(DysonDevice):
-    def __init__(self, id, credentials, p_type, s_unit):
-        super().__init__(id, '', 'Dyson Pure Cool Link', credentials, p_type, s_unit)
-        self.addTag('type', 'Fan')
-        self.addTag('type1', 'Purifier')
-
-
-dyson_map = {
-    '455': DysonPureHotCoolLink,
-    '469': DysonPureCooLinkDesk,
-    '475': DysonPureCoolLink
-}
+        return super().__repr__(credentials=self.credentials, product_type=self.product_type, state=self.state, scale_unit=self.scale_unit)

@@ -101,13 +101,22 @@ class CloudApiMonitor(Thread):
         if new_devices:
             for new_device_id in new_devices:
                 try:
-                    dyson_class = dyson_map[unknown_devices[new_device_id]['ProductType']]
-                    dyson_device = dyson_class(
+                    dyson_data = dyson_map[unknown_devices[new_device_id]['ProductType']]
+                    dyson_device = DysonDevice(
                         new_device_id,
+                        dyson_data['type'],
+                        dyson_data['name'],
                         decrypt_password(unknown_devices[new_device_id]['LocalCredentials']),
                         unknown_devices[new_device_id]['ProductType'],
                         unknown_devices[new_device_id]['ScaleUnit']
                     )
+                    dyson_device.addTag('manufacturer', 'Dyson')
+                    count = ''
+                    for tag in dyson_data['tags']:
+                        dyson_device.addTag('type{}'.format(count), tag)
+                        if not count:
+                            count = 0
+                        count = count + 1
                     logger.info("found '{}' with id '{}'".format(dyson_device.name, dyson_device.id))
                     SessionManager.addRemoteDevice(dyson_device)
                 except KeyError:

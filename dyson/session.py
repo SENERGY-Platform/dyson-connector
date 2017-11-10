@@ -6,7 +6,7 @@ try:
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 import time, json
-from threading import Thread
+from threading import Thread, Event
 from queue import Queue, Empty
 import paho.mqtt.client as mqtt
 
@@ -21,7 +21,8 @@ class Session(Thread):
         self.ip_address = ip_address
         self.port = port
         self.stop = False
-        self.publish_queue = Queue()
+        self.command_queue = Queue()
+        self.init_states = Event()
         self.device_sensor_request = Thread(target=self.__requestDeviceSensorStates, name='{}-sensor-request'.format(self.device.id))
         self.mqtt_c = mqtt.Client()
         self.mqtt_c.on_message = self.__on_message
@@ -35,31 +36,45 @@ class Session(Thread):
         try:
             self.mqtt_c.connect(self.ip_address, self.port, keepalive=5)
             self.mqtt_c.loop_start()
-            while not self.stop:
+            self.init_states.wait(timeout=10)
+            if self.device.state:
+                while not self.stop:
+                    try:
+                        command = self.command_queue.get(timeout=0.5)
+                        state = self.device.state.copy()
+                        state['fmod'] = command
+                        payload = {
+                            "msg": "STATE-SET",
+                            "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                            "mode-reason": "LAPP",
+                            "data": state
+                        }
+                        self.mqtt_c.publish('{}/{}/command'.format(self.device.product_type, self.device.id), json.dumps(payload), 1)
+                    except Empty:
+                        pass
                 try:
-                    data = self.publish_queue.get(timeout=0.5)
-                    payload = {
-                        "msg": "STATE-SET",
-                        "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                        "mode-reason": "LAPP",
-                        "data": data
-                    }
-                    self.mqtt_c.publish('{}/{}/command'.format(self.device.product_type, self.device.id), json.dumps(payload), 1)
-                except Empty:
-                    pass
-            try:
-                Client.disconnect(self.device)
-            except AttributeError:
-                DevicePool.remove(self.device)
-        except Exception as ex:
-            self.mqtt_c.loop_stop()
+                    Client.disconnect(self.device)
+                except AttributeError:
+                    DevicePool.remove(self.device)
+            else:
+                self.mqtt_c.disconnect()
+                logger.error("could not get device state for '{}'".format(self.device.id))
+        except TimeoutError as ex:
             logger.error("could not connect to broker '{}' on '{}' - reason '{}'".format(self.ip_address, self.port, ex))
+        self.mqtt_c.loop_stop()
         if self.device_sensor_request.is_alive():
             self.device_sensor_request.join()
         SessionManager.cleanSession(self.device.id)
 
     def shutdown(self):
         self.mqtt_c.disconnect()
+
+    def __requestDeviceStates(self):
+        payload = {
+            "msg": "REQUEST-CURRENT-STATE",
+            "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+        self.mqtt_c.publish('{}/{}/command'.format(self.device.product_type, self.device.id), json.dumps(payload))
 
     def __requestDeviceSensorStates(self):
         while not self.stop:
@@ -75,10 +90,14 @@ class Session(Thread):
         try:
             message = json.loads(message.payload.decode())
             if message['msg'] == 'ENVIRONMENTAL-CURRENT-SENSOR-DATA':
-                for reading in self.device.getEnvironmentSensors(message):
-                    logger.info(reading)
-            elif message['msg'] in ['CURRENT-STATE', 'STATE-CHANGE']:
-                pass
+                for reading in self.device.parseEnvironmentSensors(message):
+                    pass
+            elif message['msg'] == 'CURRENT-STATE':
+                self.device.state = message.get('product-state')
+                if not self.init_states.is_set():
+                    self.init_states.set()
+            elif message['msg'] == 'STATE-CHANGE':
+                self.device.updateState(message.get('product-state'))
             else:
                 logger.warning("unknown message: '{}'".format(message))
         except Exception as ex:
@@ -92,12 +111,12 @@ class Session(Thread):
                 Client.add(self.device)
             except AttributeError:
                 DevicePool.add(self.device)
+            self.__requestDeviceStates()
             self.device_sensor_request.start()
         else:
             logger.error("could not connect to broker '{}' on '{}' - reason '{}'".format(self.ip_address, self.port, rc))
 
     def __on_disconnect(self, client, userdata, rc):
-        self.mqtt_c.loop_stop()
         self.stop = True
         if rc == 0:
             logger.info("connection to broker '{}' on '{}' closed by client".format(self.ip_address, self.port))

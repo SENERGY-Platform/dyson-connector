@@ -8,21 +8,28 @@ try:
     from modules.logger import root_logger
     from modules.device_pool import DevicePool
     from connector.client import Client
+    import dyson.discovery
     from dyson.cloud_api_monitor import CloudApiMonitor
+    from dyson.session import SessionManager
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 import time
 
+
 logger = root_logger.getChild(__name__)
 
 
-def dysonController():
-    pass
+def router():
+    time.sleep(10)
+    session = SessionManager.sessions.get('NN2-EU-HKA3617A')
+    time.sleep(5)
+    session.command_queue.put('FAN')
+    time.sleep(10)
+    session.command_queue.put('OFF')
 
 
 if __name__ == '__main__':
     dyson_monitor = CloudApiMonitor()
+    #time.sleep(30)
     #connector_client = Client(device_manager=DevicePool)
-    #dysonController()
-
-    import dyson.discovery
+    #router()
