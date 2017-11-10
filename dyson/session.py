@@ -94,7 +94,7 @@ class Session(Thread):
                 for reading in self.device.parseEnvironmentSensors(message):
                     pass
             elif message['msg'] == 'CURRENT-STATE':
-                self.device.__state = message.get('product-state')
+                self.device.state = message.get('product-state')
                 if not self.init_state.is_set():
                     self.init_state.set()
             elif message['msg'] == 'STATE-CHANGE':
