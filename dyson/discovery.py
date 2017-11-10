@@ -1,10 +1,12 @@
 try:
     from modules.logger import root_logger
     from dyson.session import SessionManager
+    from dyson.cloud_api_monitor import CloudApiMonitor
+    from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 from socket import inet_ntoa as convert32bitToIp
-from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf, ServiceInfo
+import time
 
 
 logger = root_logger.getChild(__name__)
@@ -22,4 +24,8 @@ class ServiceListener:
         SessionManager.addLocalDevice(info.name.split(".")[0].split("_")[1], convert32bitToIp(info.address), info.port)
 
 
-browser = ServiceBrowser(Zeroconf(), "_dyson_mqtt._tcp.local.", ServiceListener())
+def startDiscovery(init_time=30):
+    browser = ServiceBrowser(Zeroconf(), "_dyson_mqtt._tcp.local.", ServiceListener())
+    dyson_monitor = CloudApiMonitor()
+    time.sleep(init_time)
+    return browser, dyson_monitor
