@@ -8,28 +8,43 @@ try:
     from modules.logger import root_logger
     from modules.device_pool import DevicePool
     from connector.client import Client
-    import dyson.discovery
-    from dyson.cloud_api_monitor import CloudApiMonitor
     from dyson.session import SessionManager
+    from dyson.discovery import startDiscovery
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
-import time
 
 
 logger = root_logger.getChild(__name__)
 
 
+"""
+"fmod": fan mode,
+"fnsp": speed,
+"oson": oscillation,
+"sltm": sleep_timer,
+"rhtm": standby_monitoring,  # monitor air quality when inactive
+"rstf": reset_filter,  # reset filter lifecycle
+"qtar": quality_target,
+"nmod": night_mode
+"""
+
+
 def router():
-    time.sleep(10)
+    import time
     session = SessionManager.sessions.get('NN2-EU-HKA3617A')
     time.sleep(5)
-    session.command_queue.put('FAN')
+    session.command_queue.put({'fnst': 'FAN', 'fnsp': '0005'})
     time.sleep(10)
-    session.command_queue.put('OFF')
+    session.command_queue.put({'oson': 'ON'})
+    time.sleep(10)
+    session.command_queue.put({'fnsp': '0003'})
+    time.sleep(20)
+    session.command_queue.put({'fnst': 'OFF'})
+    time.sleep(10)
+    session.shutdown()
 
 
 if __name__ == '__main__':
-    dyson_monitor = CloudApiMonitor()
-    #time.sleep(30)
+    startDiscovery()
     #connector_client = Client(device_manager=DevicePool)
-    #router()
+    router()
