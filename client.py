@@ -31,20 +31,21 @@ logger = root_logger.getChild(__name__)
 
 def router():
     import time
+    logger.info("start test")
     session = SessionManager.sessions.get('NN2-EU-HKA3617A')
     time.sleep(5)
-    session.command_queue.put({'fnst': 'FAN', 'fnsp': '0005'})
+    session.command_queue.put({'fmod': 'FAN', 'fnsp': '0005'})
     time.sleep(10)
     session.command_queue.put({'oson': 'ON'})
     time.sleep(10)
     session.command_queue.put({'fnsp': '0003'})
     time.sleep(20)
-    session.command_queue.put({'fnst': 'OFF'})
+    session.command_queue.put({'fmod': 'OFF'})
     time.sleep(10)
     session.shutdown()
 
 
 if __name__ == '__main__':
-    startDiscovery()
+    startDiscovery(15)
     #connector_client = Client(device_manager=DevicePool)
     router()
