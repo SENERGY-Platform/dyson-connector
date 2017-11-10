@@ -11,7 +11,6 @@ def unpad(string):
 
 def decrypt_password(encrypted_password):
     """Decrypt password.
-
     :param encrypted_password: Encrypted password
     """
     key = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10' \
@@ -19,6 +18,5 @@ def decrypt_password(encrypted_password):
     init_vector = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
                   b'\x00\x00\x00\x00'
     cipher = AES.new(key, AES.MODE_CBC, init_vector)
-    json_password = json.loads(unpad(
-        cipher.decrypt(base64.b64decode(encrypted_password)).decode('utf-8')))
+    json_password = json.loads(unpad(cipher.decrypt(base64.b64decode(encrypted_password)).decode('utf-8')))
     return json_password["apPasswordHash"]
