@@ -35,7 +35,7 @@ class DysonDevice(Device):
         self.credentials = credentials
         self.scale_unit = s_unit
         self.product_type = p_type
-        self.state = None
+        self.__state = None
         self.addTag('manufacturer', 'Dyson')
 
     def parseEnvironmentSensors(self, data) -> list:
@@ -58,7 +58,26 @@ class DysonDevice(Device):
 
     def updateState(self, data):
         for state, value in data.items():
-            self.state[state] = value[1]
+            self.__state[state] = value[1]
+
+    @property
+    def state(self):
+        if self.__state:
+            state = self.__state.copy()
+            odd_keys = ['filf', 'fnst', 'ercd', 'wacd']
+            missing_keys = {'sltm': 'STET', 'rstf': 'STET'}
+            for key in odd_keys:
+                try:
+                    del state[key]
+                except KeyError:
+                    pass
+            for key, value in missing_keys.items():
+                state[key] = value
+            return state
+
+    @state.setter
+    def state(self, arg):
+        self.__state = arg
 
     def __repr__(self):
-        return super().__repr__(credentials=self.credentials, product_type=self.product_type, state=self.state, scale_unit=self.scale_unit)
+        return super().__repr__(credentials=self.credentials, product_type=self.product_type, state=self.__state, scale_unit=self.scale_unit)

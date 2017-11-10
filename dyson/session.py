@@ -22,7 +22,7 @@ class Session(Thread):
         self.port = port
         self.stop = False
         self.command_queue = Queue()
-        self.init_states = Event()
+        self.init_state = Event()
         self.device_sensor_request = Thread(target=self.__requestDeviceSensorStates, name='{}-sensor-request'.format(self.device.id))
         self.mqtt_c = mqtt.Client()
         self.mqtt_c.on_message = self.__on_message
@@ -36,13 +36,14 @@ class Session(Thread):
         try:
             self.mqtt_c.connect(self.ip_address, self.port, keepalive=5)
             self.mqtt_c.loop_start()
-            self.init_states.wait(timeout=10)
+            self.init_state.wait(timeout=10)
             if self.device.state:
                 while not self.stop:
                     try:
                         command = self.command_queue.get(timeout=0.5)
-                        state = self.device.state.copy()
-                        state['fmod'] = command
+                        state = self.device.state
+                        for key, value in command.items():
+                            state[key] = value
                         payload = {
                             "msg": "STATE-SET",
                             "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -93,9 +94,9 @@ class Session(Thread):
                 for reading in self.device.parseEnvironmentSensors(message):
                     pass
             elif message['msg'] == 'CURRENT-STATE':
-                self.device.state = message.get('product-state')
-                if not self.init_states.is_set():
-                    self.init_states.set()
+                self.device.__state = message.get('product-state')
+                if not self.init_state.is_set():
+                    self.init_state.set()
             elif message['msg'] == 'STATE-CHANGE':
                 self.device.updateState(message.get('product-state'))
             else:
