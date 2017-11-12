@@ -3,8 +3,6 @@ try:
     from connector.device import Device
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
-import json
-
 
 logger = root_logger.getChild(__name__)
 
@@ -28,8 +26,21 @@ dyson_map = {
 }
 
 
-
 class DysonDevice(Device):
+    state_map = {
+        'fmod': ('OFF', 'FAN', 'AUTO'), # fan mode
+        'fnsp': ('0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '0010', 'AUTO'), # fan speed
+        'oson': ('ON', 'OFF'), # oscillation
+        'sltm': tuple(['STET'] + range(1, 1441)), # sleep timer
+        'rhtm': ('ON', 'OFF'), # standby monitoring (monitor air quality when inactive)
+        'rstf': ('RSTF', 'STET'), # reset filter
+        'qtar': ('0001', '0003', '0004'), # quality target
+        'nmod': ('ON', 'OFF'), # night mode
+        'hmod': ('HEAT', 'OFF'), # heat mode
+        'ffoc': ('ON', 'OFF'), # fan focus
+        'hmax': tuple(range(2740, 3101)) # heat target from 1°C to 37°C in Kelvin
+    }
+
     def __init__(self, id, type, name, credentials, p_type, s_unit):
         super().__init__(id, type, name)
         self.credentials = credentials

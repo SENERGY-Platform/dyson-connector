@@ -43,7 +43,8 @@ class Session(Thread):
                         command = self.command_queue.get(timeout=0.5)
                         state = self.device.state
                         for key, value in command.items():
-                            state[key] = value
+                            if key in DysonDevice.state_map and value in DysonDevice.state_map[key]:
+                                state[key] = value
                         payload = {
                             "msg": "STATE-SET",
                             "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -53,6 +54,8 @@ class Session(Thread):
                         self.mqtt_c.publish('{}/{}/command'.format(self.device.product_type, self.device.id), json.dumps(payload), 1)
                     except Empty:
                         pass
+                    except Exception as ex:
+                        logger.error("error handling command - '{}'".format(ex))
                 try:
                     Client.disconnect(self.device)
                 except AttributeError:
