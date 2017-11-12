@@ -12,40 +12,41 @@ try:
     from dyson.discovery import startDiscovery
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
-
+import json
 
 logger = root_logger.getChild(__name__)
 
 
-"""
-"fmod": fan mode,
-"fnsp": speed,
-"oson": oscillation,
-"sltm": sleep_timer,
-"rhtm": standby_monitoring,  # monitor air quality when inactive
-"rstf": reset_filter,  # reset filter lifecycle
-"qtar": quality_target,
-"nmod": night_mode
-"""
-
-
 def router():
+    while True:
+        task = Client.receive()
+        try:
+            for part in task.payload.get('protocol_parts'):
+                if part.get('name') == 'data':
+                    command = json.loads(part.get('value'))
+                    logger.info(command)
+                session = SessionManager.sessions.get(task.payload.get('device_url'))
+                session.command_queue.put(command)
+        except Exception as ex:
+            logger.error("could not route command '{}' for '{}'".format(task.payload.get('protocol_parts'), task.payload.get('device_url')))
+            logger.error(ex)
+
+def test():
     import time
     logger.info("start test")
     session = SessionManager.sessions.get('NN2-EU-HKA3617A')
-    time.sleep(5)
     session.command_queue.put({'fmod': 'FAN', 'fnsp': '0005'})
     time.sleep(10)
     session.command_queue.put({'oson': 'ON'})
     time.sleep(10)
     session.command_queue.put({'fnsp': '0003'})
-    time.sleep(20)
-    session.command_queue.put({'fmod': 'OFF'})
     time.sleep(10)
-    session.shutdown()
+    session.command_queue.put({'fnsp': '0010'})
+    time.sleep(5)
+    session.command_queue.put({'fmod': 'OFF'})
 
 
 if __name__ == '__main__':
     startDiscovery(15)
-    #connector_client = Client(device_manager=DevicePool)
+    connector_client = Client(device_manager=DevicePool)
     router()
