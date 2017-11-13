@@ -103,7 +103,7 @@ class Session(Thread):
                             'unit': reading[2],
                             'time': reading[3]
                         }),
-                        block=True
+                        block=False
                     )
             elif message['msg'] == 'CURRENT-STATE':
                 self.device.state = message.get('product-state')
