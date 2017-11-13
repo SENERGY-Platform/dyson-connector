@@ -95,7 +95,16 @@ class Session(Thread):
             message = json.loads(message.payload.decode())
             if message['msg'] == 'ENVIRONMENTAL-CURRENT-SENSOR-DATA':
                 for reading in self.device.parseEnvironmentSensors(message):
-                    pass
+                    Client.event(
+                        self.device,
+                        reading[0],
+                        json.dumps({
+                            'value': reading[1],
+                            'unit': reading[2],
+                            'time': reading[3]
+                        }),
+                        block=True
+                    )
             elif message['msg'] == 'CURRENT-STATE':
                 self.device.state = message.get('product-state')
                 if not self.init_state.is_set():
