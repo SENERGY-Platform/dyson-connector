@@ -24,10 +24,11 @@ def router():
             for part in task.payload.get('protocol_parts'):
                 if part.get('name') == 'data':
                     command = json.loads(part.get('value'))
-                    logger.info(command)
                 session = SessionManager.sessions.get(task.payload.get('device_url'))
                 session.command_queue.put(command)
+                Client.response(task, '200')
         except Exception as ex:
+            Client.response(task, '500')
             logger.error("could not route command '{}' for '{}'".format(task.payload.get('protocol_parts'), task.payload.get('device_url')))
             logger.error(ex)
 
