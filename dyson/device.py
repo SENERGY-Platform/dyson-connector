@@ -31,7 +31,7 @@ class DysonDevice(Device):
         'fmod': ('OFF', 'FAN', 'AUTO'), # fan mode
         'fnsp': ('0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '0010', 'AUTO'), # fan speed
         'oson': ('ON', 'OFF'), # oscillation
-        'sltm': tuple(['STET'] + range(1, 1441)), # sleep timer
+        'sltm': tuple(['STET'] + list(range(1, 1441))), # sleep timer
         'rhtm': ('ON', 'OFF'), # standby monitoring (monitor air quality when inactive)
         'rstf': ('RSTF', 'STET'), # reset filter
         'qtar': ('0001', '0003', '0004'), # quality target
@@ -55,16 +55,16 @@ class DysonDevice(Device):
         data = data.get('data')
         if data.get('hact'):
             humidity = 0 if data.get('hact') == 'OFF' else int(data.get('hact'))
-            readings.append(('humidity service', humidity, time))
+            readings.append(('humidity_reading', humidity, '%', time))
         if data.get('vact'):
             volatile_compounds = 0 if data.get('vact') == 'INIT' else int(data.get('vact'))
-            readings.append(('volatile_compounds service', volatile_compounds, time))
+            readings.append(('volatile_comp_reading', volatile_compounds, 'Number', time))
         if data.get('tact'):
-            temperature = 0 if data.get('tact') == 'OFF' else float(data.get('tact'))/10
-            readings.append(('temperature service', temperature, time))
+            temperature = 0.0 if data.get('tact') == 'OFF' else round(float(data.get('tact')) / 10 - 273.15, 2)
+            readings.append(('temperature_reading', temperature, '°C', time))
         if data.get('pact'):
             dust = 0 if data.get('pact') == 'INIT' else int(data.get('pact'))
-            readings.append(('dust service', dust, time))
+            readings.append(('dust_reading', dust, 'Amount', time))
         return readings
 
     def updateState(self, data):
