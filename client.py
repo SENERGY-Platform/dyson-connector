@@ -32,20 +32,6 @@ def router():
             logger.error("could not route command '{}' for '{}'".format(task.payload.get('protocol_parts'), task.payload.get('device_url')))
             logger.error(ex)
 
-def test():
-    import time
-    logger.info("start test")
-    session = SessionManager.sessions.get('NN2-EU-HKA3617A')
-    session.command_queue.put({'fmod': 'FAN', 'fnsp': '0005'})
-    time.sleep(10)
-    session.command_queue.put({'oson': 'ON'})
-    time.sleep(10)
-    session.command_queue.put({'fnsp': '0003'})
-    time.sleep(10)
-    session.command_queue.put({'fnsp': '0010'})
-    time.sleep(5)
-    session.command_queue.put({'fmod': 'OFF'})
-
 
 if __name__ == '__main__':
     startDiscovery(15)
