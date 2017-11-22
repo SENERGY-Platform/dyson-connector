@@ -49,7 +49,8 @@ class CloudApiMonitor(Thread):
         http_resp = http.post(
             "https://{}/v1/userregistration/authenticate?country={}".format(DYSON_CLOUD_API_URL, DYSON_ACCOUNT_COUNTRY),
             json.dumps(body),
-            headers={'Content-Type': 'application/json'}
+            headers={'Content-Type': 'application/json'},
+            verify=False
         )
         if http_resp.status == 200:
             credentials = json.loads(http_resp.body)
@@ -68,7 +69,8 @@ class CloudApiMonitor(Thread):
         unknown_devices = dict()
         http_resp = http.get(
             "https://api.cp.dyson.com/v1/provisioningservice/manifest",
-            auth=(DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW)
+            auth=(DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW),
+            verify=False
         )
         if http_resp.status == 200:
             devices = json.loads(http_resp.body)
