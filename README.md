@@ -16,8 +16,10 @@ Air quality target: `'qtar': <'0001', '0003', '0004'>`
 
 Night mode: `'nmod': <'ON', 'OFF'>`
 
+----
+
 Heat mode: `'hmod': <'HEAT', 'OFF'>`
 
 Fan focus: `'ffoc': <'ON', 'OFF'>`
 
-Heat target from 1°C to 37°C in Kelvin: `'hmax': <274, 310>`
+Heat target from 1°C to 37°C in Kelvin: `'hmax': <274 - 310>`
