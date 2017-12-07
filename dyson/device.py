@@ -20,7 +20,7 @@ dyson_map = {
     },
     '475': {
         'name': 'Dyson Pure Cool Link',
-        'type': 'iot#2b7534de-c2d9-4f5c-a6a0-9e3b21a09f02',
+        'type': 'iot#76523381-1b19-4280-9028-c3fa30899996',
         'tags': ('Fan', 'Purifier')
     }
 }
