@@ -1,5 +1,5 @@
 try:
-    from modules.logger import root_logger
+    from dyson.logger import root_logger
     from dyson.session import SessionManager
     from dyson.cloud_api_monitor import CloudApiMonitor
     from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf

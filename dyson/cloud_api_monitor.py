@@ -1,5 +1,4 @@
 try:
-    from modules.logger import root_logger
     from modules.http_lib import Methods as http
     from modules.device_pool import DevicePool
     from connector.client import Client
@@ -7,6 +6,7 @@ try:
     from dyson.device import DysonDevice, dyson_map
     from dyson.session import SessionManager
     from libpurecoollink.utils import decrypt_password
+    from dyson.logger import root_logger
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 import time, json

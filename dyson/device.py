@@ -1,5 +1,5 @@
 try:
-    from modules.logger import root_logger
+    from dyson.logger import root_logger
     from connector.device import Device
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))

@@ -5,7 +5,7 @@ if import_path not in sys.path:
 
 
 try:
-    from modules.logger import root_logger
+    from dyson.logger import root_logger
     from modules.device_pool import DevicePool
     from connector.client import Client
     from dyson.session import SessionManager
