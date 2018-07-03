@@ -105,6 +105,7 @@ class Session(Thread):
                         }),
                         block=False
                     )
+                    time.sleep(0.1)
             elif message['msg'] == 'CURRENT-STATE':
                 self.device.state = message.get('product-state')
                 if not self.init_state.is_set():
