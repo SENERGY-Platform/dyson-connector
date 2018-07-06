@@ -1,6 +1,6 @@
 try:
     from dyson.logger import root_logger
-    from connector.device import Device
+    from connector_client.device import Device
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 

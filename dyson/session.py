@@ -1,7 +1,7 @@
 try:
     from dyson.logger import root_logger
-    from modules.device_pool import DevicePool
-    from connector.client import Client
+    from connector_client.modules.device_pool import DevicePool
+    from connector_client.client import Client
     from dyson.device import DysonDevice
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
