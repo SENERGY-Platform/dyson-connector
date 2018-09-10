@@ -2,7 +2,7 @@ try:
     from connector_client.modules.http_lib import Methods as http
     from connector_client.modules.device_pool import DevicePool
     from connector_client.client import Client
-    from dyson.cloud_api_configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY, DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW, writeConf
+    from dyson.configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY, DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW, writeConf
     from dyson.device import DysonDevice, dyson_map
     from dyson.session import SessionManager
     from libpurecoollink.utils import decrypt_password
@@ -58,8 +58,8 @@ class CloudApiMonitor(Thread):
             global DYSON_CLOUD_API_PW
             DYSON_CLOUD_API_USER = credentials.get('Account')
             DYSON_CLOUD_API_PW = credentials.get('Password')
-            writeConf('CLOUD_API', 'user', DYSON_CLOUD_API_USER)
-            writeConf('CLOUD_API', 'pw', DYSON_CLOUD_API_PW)
+            writeConf('DYSON_API', 'user', DYSON_CLOUD_API_USER)
+            writeConf('DYSON_API', 'pw', DYSON_CLOUD_API_PW)
             return True
         logger.error("could not retrieve dyson cloud credentials - '{}' - '{}'".format(http_resp.status, http_resp.body))
         return False
