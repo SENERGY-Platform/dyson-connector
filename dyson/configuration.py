@@ -7,33 +7,38 @@ import os, inspect, configparser
 
 logger = root_logger.getChild(__name__)
 
-
-dyson_account_email = 'smart.energy.platform@gmail.com'
-dyson_account_pw = 'connector1!'
-dyson_account_country = 'DE'
-
+conf_path = str(os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])))
+conf_file = 'dyson.conf'
 
 config = configparser.ConfigParser()
-conf_file_path = '{}/cloud_api.conf'.format(os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])))
 
 
-if not os.path.isfile(conf_file_path):
+
+if not os.path.isfile(os.path.join(conf_path, conf_file)):
     config['DYSON_ACCOUNT'] = {
-        'email': dyson_account_email,
-        'pw': dyson_account_pw,
-        'country': dyson_account_country
+        'email': '',
+        'pw': '',
+        'country': ''
     }
-    config['CLOUD_API'] = {
+    config['DYSON_API'] = {
         'url': 'api.cp.dyson.com',
         'user': '',
         'pw': '',
     }
-    with open(conf_file_path, 'w') as conf_file:
+    config['SEPL'] = {
+        'device_type': '',
+        'device_service_humidity': '',
+        'device_service_volatile': '',
+        'device_service_temperature': '',
+        'device_service_dust': ''
+    }
+    with open(os.path.join(conf_path, conf_file), 'w') as conf_file:
         config.write(conf_file)
+    exit("Created blank config file at '{}'".format(conf_path))
 
 
 try:
-    config.read(conf_file_path)
+    config.read(os.path.join(conf_path, conf_file))
 except Exception as ex:
     exit(ex)
 
@@ -41,8 +46,8 @@ except Exception as ex:
 def writeConf(section, option, value):
     config.set(section=section, option=option, value=value)
     try:
-        with open(conf_file_path, 'w') as conf_file:
-            config.write(conf_file)
+        with open(os.path.join(conf_path, conf_file), 'w') as cf:
+            config.write(cf)
     except Exception as ex:
         print(ex)
 
@@ -50,6 +55,20 @@ def writeConf(section, option, value):
 DYSON_ACCOUNT_EMAIL = config['DYSON_ACCOUNT']['email']
 DYSON_ACCOUNT_PW = config['DYSON_ACCOUNT']['pw']
 DYSON_ACCOUNT_COUNTRY = config['DYSON_ACCOUNT']['country']
-DYSON_CLOUD_API_URL = config['CLOUD_API']['url']
-DYSON_CLOUD_API_USER = config['CLOUD_API']['user']
-DYSON_CLOUD_API_PW = config['CLOUD_API']['pw']
+DYSON_CLOUD_API_URL = config['DYSON_API']['url']
+DYSON_CLOUD_API_USER = config['DYSON_API']['user']
+DYSON_CLOUD_API_PW = config['DYSON_API']['pw']
+SEPL_DEVICE_TYPE = config['SEPL']['device_type']
+SEPL_SERVICE_HUM = config['SEPL']['device_service_humidity']
+SEPL_SERVICE_VOL = config['SEPL']['device_service_volatile']
+SEPL_SERVICE_TEM = config['SEPL']['device_service_temperature']
+SEPL_SERVICE_DUS = config['SEPL']['device_service_dust']
+
+if not all((DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY)):
+    exit('Please provide Dyson account credentials')
+
+if not DYSON_CLOUD_API_URL:
+    exit('Please provide Dyson cloud API credentials')
+
+if not all((SEPL_DEVICE_TYPE, SEPL_SERVICE_HUM, SEPL_SERVICE_VOL, SEPL_SERVICE_TEM, SEPL_SERVICE_DUS)):
+    exit('Please provide SEPL device type and services')
