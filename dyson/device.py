@@ -1,5 +1,6 @@
 try:
     from dyson.logger import root_logger
+    from dyson.configuration import SEPL_DEVICE_TYPE, SEPL_SERVICE_DUS, SEPL_SERVICE_HUM, SEPL_SERVICE_TEM, SEPL_SERVICE_VOL
     from connector_client.device import Device
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
@@ -20,7 +21,7 @@ dyson_map = {
     },
     '475': {
         'name': 'Dyson Pure Cool Link',
-        'type': 'iot#76523381-1b19-4280-9028-c3fa30899996',
+        'type': SEPL_DEVICE_TYPE,
         'tags': ('Fan', 'Purifier')
     }
 }
@@ -55,16 +56,16 @@ class DysonDevice(Device):
         data = data.get('data')
         if data.get('hact'):
             humidity = 0 if data.get('hact') == 'OFF' else int(data.get('hact'))
-            readings.append(('humidity_reading', humidity, '%', time))
+            readings.append((SEPL_SERVICE_HUM, humidity, '%', time))
         if data.get('vact'):
             volatile_compounds = 0 if data.get('vact') == 'INIT' else int(data.get('vact'))
-            readings.append(('volatile_comp_reading', volatile_compounds, 'Number', time))
+            readings.append((SEPL_SERVICE_VOL, volatile_compounds, 'Number', time))
         if data.get('tact'):
             temperature = 0.0 if data.get('tact') == 'OFF' else round(float(data.get('tact')) / 10 - 273.15, 2)
-            readings.append(('temperature_reading', temperature, '°C', time))
+            readings.append((SEPL_SERVICE_TEM, temperature, '°C', time))
         if data.get('pact'):
             dust = 0 if data.get('pact') == 'INIT' else int(data.get('pact'))
-            readings.append(('dust_reading', dust, 'Amount', time))
+            readings.append((SEPL_SERVICE_DUS, dust, 'Amount', time))
         return readings
 
     def updateState(self, data):
