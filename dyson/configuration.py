@@ -15,6 +15,7 @@ config = configparser.ConfigParser()
 
 
 if not os.path.isfile(os.path.join(conf_path, conf_file)):
+    print('No config file found')
     config['DYSON_ACCOUNT'] = {
         'email': '',
         'pw': '',
