@@ -7,7 +7,7 @@ import os, inspect, configparser
 
 logger = root_logger.getChild(__name__)
 
-conf_path = str(os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])))
+conf_path = os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])
 conf_file = 'dyson.conf'
 
 config = configparser.ConfigParser()
