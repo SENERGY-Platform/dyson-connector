@@ -1,4 +1,7 @@
-"""Utilities for Dyson Pure Hot+Cool link devices."""
+"""Utilities for Dyson Pure Hot+Cool link devices.
+
+Removed everything but unpad and decrypt_password.
+"""
 import json
 import base64
 from Crypto.Cipher import AES
