@@ -42,8 +42,7 @@ class CloudApiMonitor(Thread):
                 logger.info("retry in 30s")
                 time.sleep(30)
         unknown_devices = self._apiQueryDevices()
-        if unknown_devices:
-            self._evaluate(unknown_devices)
+        self._evaluate(unknown_devices)
         self.start()
 
 
@@ -53,8 +52,7 @@ class CloudApiMonitor(Thread):
         while True:
             time.sleep(300)
             unknown_devices = self._apiQueryDevices()
-            if unknown_devices:
-                self._evaluate(unknown_devices)
+            self._evaluate(unknown_devices)
 
 
     def _getApiCredentials(self):
