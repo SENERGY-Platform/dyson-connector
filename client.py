@@ -16,8 +16,8 @@
 
 try:
     from dyson.logger import root_logger
-    from connector_client.modules.device_pool import DevicePool
-    from connector_client.client import Client
+    from connector_lib.modules.device_pool import DevicePool
+    from connector_lib.client import Client
     from dyson.session import SessionManager
     from dyson.discovery import startDiscovery
 except ImportError as ex:

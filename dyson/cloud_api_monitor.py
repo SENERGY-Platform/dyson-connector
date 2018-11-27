@@ -15,9 +15,9 @@
 """
 
 try:
-    from connector_client.modules.http_lib import Methods as http
-    from connector_client.modules.device_pool import DevicePool
-    from connector_client.client import Client
+    from connector_lib.modules.http_lib import Methods as http
+    from connector_lib.modules.device_pool import DevicePool
+    from connector_lib.client import Client
     from dyson.configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY, DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW, writeConf
     from dyson.device import DysonDevice, dyson_map
     from dyson.session import SessionManager

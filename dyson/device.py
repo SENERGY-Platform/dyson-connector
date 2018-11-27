@@ -17,7 +17,7 @@
 try:
     from dyson.logger import root_logger
     from dyson.configuration import SEPL_DEVICE_TYPE, SEPL_SERVICE_DUS, SEPL_SERVICE_HUM, SEPL_SERVICE_TEM, SEPL_SERVICE_VOL
-    from connector_client.device import Device
+    from connector_lib.device import Device
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 
