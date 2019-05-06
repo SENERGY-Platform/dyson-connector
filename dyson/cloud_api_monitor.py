@@ -110,7 +110,7 @@ class CloudApiMonitor(Thread):
             for missing_device_id in missing_devices:
                 logger.info("can't find '{}'".format(missing_device_id))
                 try:
-                    Client.delete(missing_device_id)
+                    Client.disconnect(missing_device_id)
                 except AttributeError:
                     DevicePool.remove(missing_device_id)
                 SessionManager.delRemoteDevice(missing_device_id)
