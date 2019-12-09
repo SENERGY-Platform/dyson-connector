@@ -14,12 +14,10 @@
    limitations under the License.
 """
 
-try:
-    from dyson.logger import root_logger
-    from dyson.configuration import SEPL_DEVICE_TYPE, SEPL_SERVICE_DUS, SEPL_SERVICE_HUM, SEPL_SERVICE_TEM, SEPL_SERVICE_VOL
-    from connector_lib.device import Device
-except ImportError as ex:
-    exit("{} - {}".format(__name__, ex.msg))
+from dyson.logger import root_logger
+from dyson.configuration import SEPL_DEVICE_TYPE, SEPL_SERVICE_DUS, SEPL_SERVICE_HUM, SEPL_SERVICE_TEM, SEPL_SERVICE_VOL
+from connector_lib.device import Device
+
 
 logger = root_logger.getChild(__name__)
 

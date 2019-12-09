@@ -14,10 +14,7 @@
    limitations under the License.
 """
 
-try:
-    from dyson.logger import root_logger
-except ImportError as ex:
-    exit("{} - {}".format(__name__, ex.msg))
+from dyson.logger import root_logger
 import os, inspect, configparser
 
 

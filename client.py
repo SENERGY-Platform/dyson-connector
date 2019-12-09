@@ -14,14 +14,12 @@
    limitations under the License.
 """
 
-try:
-    from dyson.logger import root_logger
-    from connector_lib.modules.device_pool import DevicePool
-    from connector_lib.client import Client
-    from dyson.session import SessionManager
-    from dyson.discovery import startDiscovery
-except ImportError as ex:
-    exit("{} - {}".format(__name__, ex.msg))
+
+from dyson.logger import root_logger
+from connector_lib.modules.device_pool import DevicePool
+from connector_lib.client import Client
+from dyson.session import SessionManager
+from dyson.discovery import startDiscovery
 import json
 
 logger = root_logger.getChild(__name__)

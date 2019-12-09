@@ -14,13 +14,11 @@
    limitations under the License.
 """
 
-try:
-    from dyson.logger import root_logger
-    from connector_lib.modules.device_pool import DevicePool
-    from connector_lib.client import Client
-    from dyson.device import DysonDevice
-except ImportError as ex:
-    exit("{} - {}".format(__name__, ex.msg))
+
+from dyson.logger import root_logger
+from connector_lib.modules.device_pool import DevicePool
+from connector_lib.client import Client
+from dyson.device import DysonDevice
 import time, json
 from threading import Thread, Event
 from queue import Queue, Empty

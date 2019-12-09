@@ -14,10 +14,8 @@
    limitations under the License.
 """
 
-try:
-    from connector_lib.modules.logger import connector_lib_log_handler
-except ImportError as ex:
-    exit("{} - {}".format(__name__, ex.msg))
+
+from connector_lib.modules.logger import connector_lib_log_handler
 import logging
 
 

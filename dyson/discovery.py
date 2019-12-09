@@ -14,13 +14,11 @@
    limitations under the License.
 """
 
-try:
-    from dyson.logger import root_logger
-    from dyson.session import SessionManager
-    from dyson.cloud_api_monitor import CloudApiMonitor
-    from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf
-except ImportError as ex:
-    exit("{} - {}".format(__name__, ex.msg))
+
+from dyson.logger import root_logger
+from dyson.session import SessionManager
+from dyson.cloud_api_monitor import CloudApiMonitor
+from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf
 from socket import inet_ntoa as convert32bitToIp
 import time
 
