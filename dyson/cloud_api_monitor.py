@@ -31,6 +31,8 @@ class CloudApiMonitor(Thread):
         super().__init__()
         self._init_sessions = list()
         self._know_devices = list()
+        self.__init_sessions = list()
+        self.__know_devices = list()
         if not (config.Cloud.user and config.Cloud.pw):
             while not self._getApiCredentials():
                 logger.info("retry in 30s")
@@ -39,7 +41,7 @@ class CloudApiMonitor(Thread):
         self._evaluate(unknown_devices)
 
     def run(self):
-        for session in self._init_sessions:
+        for session in self.__init_sessions:
             session.start()
         while True:
             time.sleep(300)
@@ -88,7 +90,7 @@ class CloudApiMonitor(Thread):
         return missing, new
 
     def _evaluate(self, unknown_devices):
-        missing_devices, new_devices = self._diff(self._know_devices, unknown_devices)
+        missing_devices, new_devices = self._diff(self.__know_devices, unknown_devices)
         if missing_devices:
             for missing_device_id in missing_devices:
                 logger.info("can't find '{}'".format(missing_device_id))
@@ -120,4 +122,4 @@ class CloudApiMonitor(Thread):
                     SessionManager.addRemoteDevice(dyson_device)
                 except KeyError:
                     logger.error("missing device data or malformed message - '{}'".format(unknown_devices[new_device_id]))
-        self._know_devices = unknown_devices.keys()
+        self.__know_devices = unknown_devices.keys()
