@@ -37,7 +37,6 @@ class CloudApiMonitor(Thread):
                 time.sleep(30)
         unknown_devices = self._apiQueryDevices()
         self._evaluate(unknown_devices)
-        self.start()
 
     def run(self):
         for session in self._init_sessions:
