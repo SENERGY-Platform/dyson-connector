@@ -40,6 +40,10 @@ class DysonConf:
         pw = None
 
     @section
+    class Logger:
+        level = "info"
+
+    @section
     class Senergy:
         dt_pure_cool_link = None
 
