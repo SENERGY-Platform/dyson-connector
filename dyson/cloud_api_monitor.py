@@ -28,21 +28,15 @@ logger = root_logger.getChild(__name__)
 
 class CloudApiMonitor(Thread):
     def __init__(self, client: cc_lib.client.Client):
-        super().__init__()
         super().__init__(name="CloudApiMonitor", daemon=True)
         self.__client = client
-        self.__init_sessions = list()
         self.__know_devices = list()
+
+    def run(self):
         if not (config.Cloud.user and config.Cloud.pw):
             while not self._getApiCredentials():
                 logger.info("retry in 30s")
                 time.sleep(30)
-        unknown_devices = self._apiQueryDevices()
-        self._evaluate(unknown_devices)
-
-    def run(self):
-        for session in self.__init_sessions:
-            session.start()
         while True:
             time.sleep(300)
             unknown_devices = self._apiQueryDevices()
