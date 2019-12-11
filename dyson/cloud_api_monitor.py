@@ -19,7 +19,7 @@ from dyson.device import DysonDevice, dyson_map
 from dyson.session import SessionManager
 from libpurecoollink.utils import decrypt_password
 from dyson.logger import root_logger
-import time, requests
+import time, requests, cc_lib
 from threading import Thread
 
 
@@ -27,8 +27,9 @@ logger = root_logger.getChild(__name__)
 
 
 class CloudApiMonitor(Thread):
-    def __init__(self):
+    def __init__(self, client: cc_lib.client.Client):
         super().__init__()
+        self.__client = client
         self.__init_sessions = list()
         self.__know_devices = list()
         if not (config.Cloud.user and config.Cloud.pw):
