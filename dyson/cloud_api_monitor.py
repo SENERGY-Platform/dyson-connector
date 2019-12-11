@@ -14,14 +14,10 @@
    limitations under the License.
 """
 
-from connector_lib.modules.http_lib import Methods as http
-from connector_lib.modules.device_pool import DevicePool
-from connector_lib.client import Client
-from dyson.configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_ACCOUNT_PW, DYSON_ACCOUNT_COUNTRY, DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW, writeConf
+from .configuration import config
 from dyson.device import DysonDevice, dyson_map
 from dyson.session import SessionManager
 from libpurecoollink.utils import decrypt_password
-from .configuration import config
 from dyson.logger import root_logger
 import time, json, requests
 from threading import Thread
@@ -91,7 +87,6 @@ class CloudApiMonitor(Thread):
         missing = known_set - unknown_set
         new = unknown_set - known_set
         return missing, new
-
 
     def _evaluate(self, unknown_devices):
         missing_devices, new_devices = self._diff(self._know_devices, unknown_devices)
