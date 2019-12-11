@@ -48,6 +48,9 @@ class DysonConf:
         dt_pure_cool_link = None
 
 
+if not os.path.exists(user_dir):
+    os.makedirs(user_dir)
+
 config = DysonConf('dyson.conf', user_dir)
 
 
