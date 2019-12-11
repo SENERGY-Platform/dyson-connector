@@ -19,7 +19,7 @@ from dyson.device import DysonDevice, dyson_map
 from dyson.session import SessionManager
 from libpurecoollink.utils import decrypt_password
 from dyson.logger import root_logger
-import time, json, requests
+import time, requests
 from threading import Thread
 
 
