@@ -29,6 +29,7 @@ logger = root_logger.getChild(__name__)
 class CloudApiMonitor(Thread):
     def __init__(self, client: cc_lib.client.Client):
         super().__init__()
+        super().__init__(name="CloudApiMonitor", daemon=True)
         self.__client = client
         self.__init_sessions = list()
         self.__know_devices = list()
