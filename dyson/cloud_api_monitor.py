@@ -21,6 +21,7 @@ from dyson.configuration import DYSON_CLOUD_API_URL, DYSON_ACCOUNT_EMAIL, DYSON_
 from dyson.device import DysonDevice, dyson_map
 from dyson.session import SessionManager
 from libpurecoollink.utils import decrypt_password
+from .configuration import config
 from dyson.logger import root_logger
 import time, json
 from threading import Thread
@@ -34,7 +35,7 @@ class CloudApiMonitor(Thread):
         super().__init__()
         self._init_sessions = list()
         self._know_devices = list()
-        if not (DYSON_CLOUD_API_USER and DYSON_CLOUD_API_PW):
+        if not (config.Cloud.user and config.Cloud.pw):
             while not self._getApiCredentials():
                 logger.info("retry in 30s")
                 time.sleep(30)
@@ -54,23 +55,19 @@ class CloudApiMonitor(Thread):
 
     def _getApiCredentials(self):
         body = {
-            "Email": DYSON_ACCOUNT_EMAIL,
-            "Password": DYSON_ACCOUNT_PW
+            "Email": config.Account.email,
+            "Password": config.Account.pw
         }
         http_resp = http.post(
-            "https://{}/v1/userregistration/authenticate?country={}".format(DYSON_CLOUD_API_URL, DYSON_ACCOUNT_COUNTRY),
             json.dumps(body),
             headers={'Content-Type': 'application/json'},
+            url="https://{}/{}{}".format(config.Cloud.host, config.Cloud.auth_endpt, config.Account.country),
             verify=False
         )
         if http_resp.status == 200:
             credentials = json.loads(http_resp.body)
-            global DYSON_CLOUD_API_USER
-            global DYSON_CLOUD_API_PW
-            DYSON_CLOUD_API_USER = credentials.get('Account')
-            DYSON_CLOUD_API_PW = credentials.get('Password')
-            writeConf('DYSON_API', 'user', DYSON_CLOUD_API_USER)
-            writeConf('DYSON_API', 'pw', DYSON_CLOUD_API_PW)
+            config.Cloud.user = credentials.get('Account')
+            config.Cloud.pw = credentials.get('Password')
             return True
         logger.error("could not retrieve dyson cloud credentials - '{}' - '{}'".format(http_resp.status, http_resp.body))
         return False
@@ -79,8 +76,8 @@ class CloudApiMonitor(Thread):
     def _apiQueryDevices(self):
         unknown_devices = dict()
         http_resp = http.get(
-            "https://api.cp.dyson.com/v1/provisioningservice/manifest",
-            auth=(DYSON_CLOUD_API_USER, DYSON_CLOUD_API_PW),
+            url="https://{}/{}".format(config.Cloud.host, config.Cloud.provisioning_endpt),
+            auth=(config.Cloud.user, config.Cloud.pw),
             verify=False
         )
         if http_resp.status == 200:
