@@ -23,7 +23,7 @@ from dyson.session import SessionManager
 from libpurecoollink.utils import decrypt_password
 from .configuration import config
 from dyson.logger import root_logger
-import time, json
+import time, json, requests
 from threading import Thread
 
 
@@ -43,7 +43,6 @@ class CloudApiMonitor(Thread):
         self._evaluate(unknown_devices)
         self.start()
 
-
     def run(self):
         for session in self._init_sessions:
             session.start()
@@ -52,43 +51,39 @@ class CloudApiMonitor(Thread):
             unknown_devices = self._apiQueryDevices()
             self._evaluate(unknown_devices)
 
-
     def _getApiCredentials(self):
         body = {
             "Email": config.Account.email,
             "Password": config.Account.pw
         }
-        http_resp = http.post(
-            json.dumps(body),
-            headers={'Content-Type': 'application/json'},
+        http_resp = requests.post(
             url="https://{}/{}{}".format(config.Cloud.host, config.Cloud.auth_endpt, config.Account.country),
+            json=body,
             verify=False
         )
-        if http_resp.status == 200:
-            credentials = json.loads(http_resp.body)
+        if http_resp.status_code == 200:
+            credentials = http_resp.json()
             config.Cloud.user = credentials.get('Account')
             config.Cloud.pw = credentials.get('Password')
             return True
-        logger.error("could not retrieve dyson cloud credentials - '{}' - '{}'".format(http_resp.status, http_resp.body))
+        logger.error("could not retrieve dyson cloud credentials - '{}' - '{}'".format(http_resp.status_code, http_resp.raw))
         return False
-
 
     def _apiQueryDevices(self):
         unknown_devices = dict()
-        http_resp = http.get(
+        http_resp = requests.get(
             url="https://{}/{}".format(config.Cloud.host, config.Cloud.provisioning_endpt),
             auth=(config.Cloud.user, config.Cloud.pw),
             verify=False
         )
-        if http_resp.status == 200:
-            devices = json.loads(http_resp.body)
+        if http_resp.status_code == 200:
+            devices = http_resp.json()
             for device in devices:
                 try:
                     unknown_devices[device['Serial']] = device
                 except KeyError:
                     logger.error("missing device serial or malformed message - '{}'".format(device))
         return unknown_devices
-
 
     def _diff(self, known, unknown):
         known_set = set(known)
