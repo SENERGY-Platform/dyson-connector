@@ -29,8 +29,6 @@ logger = root_logger.getChild(__name__)
 class CloudApiMonitor(Thread):
     def __init__(self):
         super().__init__()
-        self._init_sessions = list()
-        self._know_devices = list()
         self.__init_sessions = list()
         self.__know_devices = list()
         if not (config.Cloud.user and config.Cloud.pw):
