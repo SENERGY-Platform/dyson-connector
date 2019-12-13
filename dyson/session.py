@@ -25,7 +25,7 @@ from queue import Queue, Empty
 import paho.mqtt.client as mqtt
 
 
-logger = root_logger.getChild(__name__)
+logger = root_logger.getChild(__name__.split(".", 1)[-1])
 
 
 class Session(Thread):

@@ -19,7 +19,7 @@ from dyson.configuration import SEPL_DEVICE_TYPE, SEPL_SERVICE_DUS, SEPL_SERVICE
 from connector_lib.device import Device
 
 
-logger = root_logger.getChild(__name__)
+logger = root_logger.getChild(__name__.split(".", 1)[-1])
 
 
 dyson_map = {
