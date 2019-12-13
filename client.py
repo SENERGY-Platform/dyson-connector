@@ -19,7 +19,7 @@ from dyson.logger import root_logger
 from connector_lib.modules.device_pool import DevicePool
 from connector_lib.client import Client
 from dyson.session import SessionManager
-from dyson.discovery import startDiscovery
+from dyson.local_monitor import startDiscovery
 import json
 
 logger = root_logger.getChild(__name__)
