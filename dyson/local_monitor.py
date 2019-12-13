@@ -17,13 +17,12 @@
 
 from dyson.logger import root_logger
 from dyson.session import SessionManager
-from dyson.cloud_api_monitor import CloudApiMonitor
 from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf
 from socket import inet_ntoa as convert32bitToIp
 import time
 
 
-logger = root_logger.getChild(__name__)
+logger = root_logger.getChild(__name__.split(".", 1)[-1])
 
 
 class ServiceListener:
@@ -40,6 +39,5 @@ class ServiceListener:
 
 def startDiscovery(init_time=30):
     browser = ServiceBrowser(Zeroconf(), "_dyson_mqtt._tcp.local.", ServiceListener())
-    dyson_monitor = CloudApiMonitor()
     time.sleep(init_time)
     return browser, dyson_monitor
