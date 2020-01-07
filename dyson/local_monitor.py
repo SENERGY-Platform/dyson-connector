@@ -195,4 +195,5 @@ class LocalMonitor(threading.Thread):
         if changed_devices:
             for device_id in changed_devices:
                 logger.info("address of '{}' changed to '{}'".format(device_id, discovered_devices[device_id]))
-        self.__devices_cache = discovered_devices
+        if any((missing_devices, new_devices, changed_devices)):
+            self.__devices_cache = discovered_devices
