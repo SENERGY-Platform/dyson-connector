@@ -180,7 +180,7 @@ class LocalMonitor(threading.Thread):
         hosts = validateHosts(discoverHosts())
         registered_ids = self.__device_manager.devices.keys()
         devices = {id: hosts[id] for id in registered_ids if id in hosts}
-        logger.debug("device discovery completed: {}".format(devices))
+        logger.debug("device discovery completed")
         return devices
 
     def __evaluate(self, discovered_devices):
