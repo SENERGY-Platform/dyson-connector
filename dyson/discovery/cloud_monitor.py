@@ -14,10 +14,10 @@
    limitations under the License.
 """
 
-from .configuration import config
-from .logger import root_logger
-from .device_manager import DeviceManager
-from .types.device import device_type_map
+from ..configuration import config
+from ..logger import root_logger
+from ..device_manager import DeviceManager
+from ..types.device import device_type_map
 import time, requests, cc_lib
 from threading import Thread
 
