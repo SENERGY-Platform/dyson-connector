@@ -146,8 +146,7 @@ class LocalMonitor(threading.Thread):
     def run(self) -> None:
         while True:
             devices = self.__discoverDevices()
-            if devices:
-                self.__evaluate(devices)
+            self.__evaluate(devices)
             time.sleep(config.Discovery.delay)
 
     # def remove_service(self, zeroconf, type, name):
