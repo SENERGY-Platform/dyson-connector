@@ -26,6 +26,9 @@ import time, threading, cc_lib, socket, os, platform, subprocess
 logger = root_logger.getChild(__name__.split(".", 1)[-1])
 
 
+probe_ports = [int(port) for port in str(config.Discovery.ports).split(";")]
+
+
 def ping(host) -> bool:
     return subprocess.call(['ping', '-c', '2', '-t', str(config.Discovery.ping_timeout), host], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
@@ -88,11 +91,11 @@ def discoverHosts() -> list:
                 worker.join()
     return alive_hosts
 
-def probeHost(host) -> bool:
+def probeHost(host, port) -> bool:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(config.Discovery.probe_timeout)
     try:
-        s.connect((host, config.Discovery.port))
+        s.connect((host, port))
         s.close()
         return True
     except (ConnectionError, TimeoutError, socket.timeout):
@@ -101,8 +104,10 @@ def probeHost(host) -> bool:
 def validateHostsWorker(hosts, valid_hosts):
     for host in hosts:
         hostname = socket.getfqdn(host)
-        if hostname and hostname is not host and probeHost(host):
-            valid_hosts[hostname.upper().split(".", 1)[0]] = host
+        if hostname and hostname is not host:
+            for port in probe_ports:
+                if probeHost(host, port):
+                    valid_hosts[hostname.upper().split(".", 1)[0]] = (host, port)
 
 def validateHosts(hosts) -> dict:
     valid_hosts = dict()
@@ -190,7 +195,7 @@ class LocalMonitor(threading.Thread):
                 logger.info("can't find '{}' at '{}'".format(device_id, self.__devices_cache[device_id]))
         if new_devices:
             for device_id in new_devices:
-                logger.info("found '{}' at '{}'".format(device_id, discovered_devices[device_id]))
+                logger.info("found '{}' at '{}' on '{}'".format(device_id, discovered_devices[device_id][0], discovered_devices[device_id][1]))
         if changed_devices:
             for device_id in changed_devices:
                 logger.info("address of '{}' changed to '{}'".format(device_id, discovered_devices[device_id]))
