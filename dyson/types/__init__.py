@@ -13,3 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+
+from .device import *
+from .service import *
+
+
+__all__ = (
+    device.__all__,
+    service.__all__
+)
