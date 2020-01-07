@@ -41,6 +41,10 @@ class DysonConf:
         pw = None
 
     @section
+    class RuntimeEnv:
+        container = False
+
+    @section
     class Logger:
         level = "info"
 
