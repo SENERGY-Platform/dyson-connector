@@ -105,7 +105,6 @@ class CloudMonitor(Thread):
         if new_devices:
             for device_id in new_devices:
                 logger.info("found '{}' with id '{}'".format(unknown_devices[device_id][0]["name"], device_id))
-                logger.debug(decrypt_password(unknown_devices[device_id][1]['credentials']))
         if changed_devices:
             for device_id in changed_devices:
                 logger.info("name of '{}' changed to '{}'".format(device_id, unknown_devices[device_id][0]["name"]))
