@@ -64,7 +64,7 @@ def apiQueryDevices():
                     },
                     {
                         "type": device["ProductType"],
-                        "credentials": device["LocalCredentials"]
+                        "pw": device["LocalCredentials"]
                     }
                 )
             except KeyError:
