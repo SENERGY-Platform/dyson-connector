@@ -58,11 +58,15 @@ def apiQueryDevices():
         devices = http_resp.json()
         for device in devices:
             try:
-                unknown_devices[device['Serial']] = {
-                    "name": device["Name"],
-                    "type": device["ProductType"],
-                    "credentials": device["LocalCredentials"]
-                }
+                unknown_devices[device['Serial']] = (
+                    {
+                        "name": device["Name"]
+                    },
+                    {
+                        "type": device["ProductType"],
+                        "credentials": device["LocalCredentials"]
+                    }
+                )
             except KeyError:
                 logger.error("missing device serial or malformed message - '{}'".format(device))
     return unknown_devices
@@ -73,7 +77,7 @@ def diff(known, unknown):
     unknown_set = set(unknown)
     missing = known_set - unknown_set
     new = unknown_set - known_set
-    changed = {key for key in known_set & unknown_set if dict(known[key]) != unknown[key]}
+    changed = {key for key in known_set & unknown_set if dict(known[key]) != unknown[key][0]}
     return missing, new, changed
 
 
@@ -100,11 +104,11 @@ class CloudMonitor(Thread):
                 logger.info("can't find '{}'".format(device_id))
         if new_devices:
             for device_id in new_devices:
-                logger.info("found '{}' with id '{}'".format(unknown_devices[device_id]["name"], device_id))
-                logger.debug(decrypt_password(unknown_devices[device_id]['credentials']))
+                logger.info("found '{}' with id '{}'".format(unknown_devices[device_id][0]["name"], device_id))
+                logger.debug(decrypt_password(unknown_devices[device_id][1]['credentials']))
         if changed_devices:
             for device_id in changed_devices:
-                logger.info("name of '{}' changed to '{}'".format(device_id, unknown_devices[device_id]["name"]))
+                logger.info("name of '{}' changed to '{}'".format(device_id, unknown_devices[device_id][0]["name"]))
         if any((missing_devices, new_devices, changed_devices)):
             pass
             # try:
