@@ -13,3 +13,47 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+
+__all__ = ('device_type_map', 'DysonPureCoolLink')
+
+
+from ..configuration import config
+from .service import SetPower, SetOscillation, SetSpeed
+from libpurecoollink.utils import decrypt_password
+import cc_lib
+
+
+class DysonPureCoolLink(cc_lib.types.Device):
+    device_type_id = config.Senergy.dt_pure_cool_link
+    services = (SetPower, SetOscillation, SetSpeed)
+
+    def __init__(self, id: str, pw: str, name: str):
+        self.id = id
+        self.__pw = pw
+        self.name = name
+
+    @property
+    def pw(self):
+        return decrypt_password(self.__pw)
+
+    def __iter__(self):
+        items = (
+            ("name", self.name),
+        )
+        for item in items:
+            yield item
+
+
+class DysonPureCoolLinkDesk(cc_lib.types.Device):
+    pass
+
+
+class DysonPureHotCoolLink(cc_lib.types.Device):
+    pass
+
+
+device_type_map = {
+    "455": DysonPureHotCoolLink,
+    "469": DysonPureCoolLinkDesk,
+    "475": DysonPureCoolLink
+}
