@@ -90,10 +90,10 @@ class CloudMonitor(Thread):
                 time.sleep(30)
         while True:
             unknown_devices = apiQueryDevices()
-            self._evaluate(unknown_devices)
+            self.__evaluate(unknown_devices)
             time.sleep(config.Cloud.poll_interval)
 
-    def _evaluate(self, unknown_devices):
+    def __evaluate(self, unknown_devices):
         missing_devices, new_devices, changed_devices = diff(self.__device_manager.devices, unknown_devices)
         if missing_devices:
             for device_id in missing_devices:
