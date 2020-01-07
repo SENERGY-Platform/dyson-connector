@@ -42,7 +42,7 @@ class DysonConf:
 
     @section
     class Discovery:
-        delay = 60
+        delay = 120
         port = 1883
         ping_timeout = 2
         probe_timeout = 2
