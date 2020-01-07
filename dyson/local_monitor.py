@@ -184,7 +184,6 @@ class LocalMonitor(threading.Thread):
         return devices
 
     def __evaluate(self, discovered_devices):
-        logger.debug("cache: {}, discovered: {}".format(self.__devices_cache, discovered_devices))
         missing_devices, new_devices, changed_devices = diff(self.__devices_cache, discovered_devices)
         if missing_devices:
             for device_id in missing_devices:
