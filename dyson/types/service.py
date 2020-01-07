@@ -13,3 +13,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+
+__all__ = ('SetPower', 'SetOscillation', 'SetSpeed')
+
+
+import cc_lib
+
+
+class SetPower(cc_lib.types.Service):
+    local_id = "setPower"
+
+
+class SetOscillation(cc_lib.types.Service):
+    local_id = "setOscillation"
+
+
+class SetSpeed(cc_lib.types.Service):
+    local_id = "setSpeed"
+
