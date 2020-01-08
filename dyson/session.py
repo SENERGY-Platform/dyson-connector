@@ -66,7 +66,6 @@ class Session(threading.Thread):
                 break
             else:
                 time.sleep(2)
-        self.__sensor_trigger.join()
         logger.info("session for '{}' closed".format(self.__device_id))
 
             # self.init_state.wait(timeout=10)
@@ -154,8 +153,7 @@ class Session(threading.Thread):
             self.__discon_count = 0
             logger.info("connected to '{}'".format(self.__device_id))
             self.__mqtt_client.subscribe("{}/{}/status/current".format(self.__model_num, self.__device_id))
-            if not self.__sensor_trigger.is_alive():
-                self.__sensor_trigger.start()
+            self.__trigger_device_state()
             try:
                 self.__client.connectDevice(self.__device_id)
             except (cc_lib.client.DeviceConnectError, cc_lib.client.NotConnectedError):
