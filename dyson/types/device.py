@@ -53,8 +53,4 @@ class DysonPureHotCoolLink(cc_lib.types.Device):
     model_num = "455"
 
 
-device_type_map = {
-    "455": DysonPureHotCoolLink,
-    "469": DysonPureCoolLinkDesk,
-    "475": DysonPureCoolLink
-}
+device_type_map = {dt.model_num: dt for dt in (DysonPureCoolLink, DysonPureCoolLinkDesk, DysonPureHotCoolLink)}
