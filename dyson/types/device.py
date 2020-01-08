@@ -26,6 +26,7 @@ import cc_lib
 class DysonPureCoolLink(cc_lib.types.Device):
     device_type_id = config.Senergy.dt_pure_cool_link
     services = (SetPower, SetOscillation, SetSpeed)
+    model_num = "475"
 
     def __init__(self, id: str, pw: str, name: str):
         self.id = id
@@ -42,10 +43,12 @@ class DysonPureCoolLink(cc_lib.types.Device):
 
 class DysonPureCoolLinkDesk(cc_lib.types.Device):
     pass
+    model_num = "469"
 
 
 class DysonPureHotCoolLink(cc_lib.types.Device):
     pass
+    model_num = "455"
 
 
 device_type_map = {
