@@ -29,12 +29,8 @@ class DysonPureCoolLink(cc_lib.types.Device):
 
     def __init__(self, id: str, pw: str, name: str):
         self.id = id
-        self.__pw = pw
+        self.pw = pw
         self.name = name
-
-    @property
-    def pw(self):
-        return decrypt_password(self.__pw)
 
     def __iter__(self):
         items = (
