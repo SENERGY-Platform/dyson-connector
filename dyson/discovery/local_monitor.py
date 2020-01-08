@@ -18,6 +18,7 @@
 from ..configuration import config
 from ..logger import root_logger
 from ..device_manager import DeviceManager
+from ..session import Session
 # from .session import SessionManager
 from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf, get_all_addresses
 import time, threading, cc_lib, socket, os, platform, subprocess
@@ -193,11 +194,21 @@ class LocalMonitor(threading.Thread):
         if missing_devices:
             for device_id in missing_devices:
                 logger.info("can't find '{}' at '{}'".format(device_id, self.__devices_cache[device_id]))
+                device = self.__device_manager.get(device_id)
+                device.session.stop()
+                device.session = None
         if new_devices:
             for device_id in new_devices:
                 logger.info("found '{}' at '{}' on '{}'".format(device_id, discovered_devices[device_id][0], discovered_devices[device_id][1]))
+                device = self.__device_manager.get(device_id)
+                device.session = Session(self.__client, device.model_num, device.id, device.pw, discovered_devices[device_id][0], discovered_devices[device_id][1])
+                device.session.start()
         if changed_devices:
             for device_id in changed_devices:
                 logger.info("address of '{}' changed to '{}'".format(device_id, discovered_devices[device_id]))
+                device = self.__device_manager.get(device_id)
+                device.session.stop()
+                device.session = Session(self.__client, device.model_num, device.id, device.pw, discovered_devices[device_id][0], discovered_devices[device_id][1])
+                device.session.start()
         if any((missing_devices, new_devices, changed_devices)):
             self.__devices_cache = discovered_devices
