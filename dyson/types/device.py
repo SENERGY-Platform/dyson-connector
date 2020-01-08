@@ -32,6 +32,7 @@ class DysonPureCoolLink(cc_lib.types.Device):
         self.id = id
         self.pw = pw
         self.name = name
+        self.session = None
 
     def __iter__(self):
         items = (
