@@ -48,6 +48,12 @@ class DysonConf:
         probe_timeout = 2
 
     @section
+    class Session:
+        sensor_interval = 10
+        keepalive = 5
+        logging = False
+
+    @section
     class RuntimeEnv:
         container = False
 
