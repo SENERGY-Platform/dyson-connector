@@ -19,7 +19,6 @@ __all__ = ('device_type_map', 'DysonPureCoolLink')
 
 from ..configuration import config
 from .service import SetPower, SetOscillation, SetSpeed
-from libpurecoollink.utils import decrypt_password
 import cc_lib
 
 
