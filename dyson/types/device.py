@@ -42,12 +42,14 @@ class DysonPureCoolLink(cc_lib.types.Device):
 
 
 class DysonPureCoolLinkDesk(cc_lib.types.Device):
-    pass
+    # device_type_id =
+    # services =
     model_num = "469"
 
 
 class DysonPureHotCoolLink(cc_lib.types.Device):
-    pass
+    # device_type_id =
+    # services =
     model_num = "455"
 
 
