@@ -202,6 +202,7 @@ class LocalMonitor(threading.Thread):
                 logger.info("found '{}' at '{}' on '{}'".format(device_id, discovered_devices[device_id][0], discovered_devices[device_id][1]))
                 device = self.__device_manager.get(device_id)
                 device.session = Session(self.__client, device.model_num, device.id, device.pw, discovered_devices[device_id][0], discovered_devices[device_id][1])
+                device.session.setSensorDataService(device.getService("getSensorReadings"))
                 device.session.start()
         if changed_devices:
             for device_id in changed_devices:
@@ -209,6 +210,7 @@ class LocalMonitor(threading.Thread):
                 device = self.__device_manager.get(device_id)
                 device.session.stop()
                 device.session = Session(self.__client, device.model_num, device.id, device.pw, discovered_devices[device_id][0], discovered_devices[device_id][1])
+                device.session.setSensorDataService(device.getService("getSensorReadings"))
                 device.session.start()
         if any((missing_devices, new_devices, changed_devices)):
             self.__devices_cache = discovered_devices
