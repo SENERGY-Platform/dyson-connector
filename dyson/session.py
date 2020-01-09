@@ -128,7 +128,6 @@ class Session(threading.Thread):
                 device=self.__device_id,
                 service=self.__push_sensor_data_service.local_id,
                 message=cc_lib.client.message.Message(json.dumps(self.__push_sensor_data_service.task(data)))
-
             )
             logger.debug(envelope)
         else:
