@@ -1,4 +1,1 @@
-netifaces<1
-pycryptodome<4
-six<2
 requests<3
