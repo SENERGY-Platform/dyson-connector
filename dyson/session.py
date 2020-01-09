@@ -192,17 +192,6 @@ class Session(threading.Thread):
                 pass
         else:
             logger.error("could not connect to '{}' - {}".format(self.__device_id, mqtt.connack_string(rc)))
-        # if rc == 0:
-        #     logger.info("connected to broker '{}' on '{}'".format(self.__ip, self.__port))
-        #     self.__mqtt_client.subscribe("{0}/{1}/status/current".format(self.__device.product_type, self.__device.id))
-        #     try:
-        #         Client.add(self.__device)
-        #     except AttributeError:
-        #         DevicePool.add(self.__device)
-        #     self.__requestDeviceStates()
-        #     self.device_sensor_request.start()
-        # else:
-        #     logger.error("could not connect to broker '{}' on '{}' - reason '{}'".format(self.__ip, self.__port, rc))
 
     def __on_disconnect(self, client, userdata, rc):
         if self.__discon_count < 1:
