@@ -17,8 +17,7 @@
 
 from .configuration import config
 from .logger import root_logger
-from .util import LockingDict
-from libpurecoollink.utils import decrypt_password
+from .util import LockingDict, decrypt_password
 import paho.mqtt.client as mqtt
 import time, json, threading, queue, typing, cc_lib
 
