@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-#RUN mkdir cc-lib
-#RUN mkdir storage
+RUN mkdir cc-lib
+RUN mkdir storage
 
-CMD [ "python", "./test.py"]
+CMD [ "python", "./client.py"]
