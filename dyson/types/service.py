@@ -17,7 +17,11 @@
 __all__ = ('SetPower', 'SetOscillation', 'SetSpeed')
 
 
+from ..logger import root_logger
 import cc_lib
+
+
+logger = root_logger.getChild(__name__.split(".", 1)[-1])
 
 
 class SetPower(cc_lib.types.Service):
