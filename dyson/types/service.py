@@ -61,3 +61,17 @@ class SetSpeed(cc_lib.types.Service):
         if err:
             logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, err))
         return {"status": 1 if err else 0}
+
+
+class SetMonitoring(cc_lib.types.Service):
+    local_id = "setMonitoring"
+
+    @staticmethod
+    def task(device, monitoring: bool):
+        if monitoring:
+            err = device.session.setState({"rhtm": "ON"})
+        else:
+            err = device.session.setState({"rhtm": "OFF"})
+        if err:
+            logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, err))
+        return {"status": 1 if err else 0}
