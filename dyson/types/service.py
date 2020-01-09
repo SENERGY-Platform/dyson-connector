@@ -75,3 +75,13 @@ class SetMonitoring(cc_lib.types.Service):
         if err:
             logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, err))
         return {"status": 1 if err else 0}
+
+
+class GetSensorReadings(cc_lib.types.Service):
+    local_id = "getSensorReadings"
+
+    @staticmethod
+    def task(readings):
+        for key, value in readings.items():
+            readings[key] = int(value)
+        return readings
