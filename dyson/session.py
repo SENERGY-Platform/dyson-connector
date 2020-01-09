@@ -95,34 +95,6 @@ class Session(threading.Thread):
         self.__sensor_trigger.join()
         logger.info("session for '{}' closed".format(self.__device_id))
 
-            # self.init_state.wait(timeout=10)
-            # if self.__device.state:
-            #     while not self.stop:
-            #         try:
-            #             command = self.command_queue.get(timeout=0.5)
-            #             state = self.__device.state
-            #             for key, value in command.items():
-            #                 if key in DysonDevice.state_map and value in DysonDevice.state_map[key]:
-            #                     state[key] = value
-            #             payload = {
-            #                 "msg": "STATE-SET",
-            #                 "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            #                 "mode-reason": "LAPP",
-            #                 "data": state
-            #             }
-            #             self.__mqtt_client.publish('{}/{}/command'.format(self.__device.product_type, self.__device.id), json.dumps(payload), 1)
-            #         except queue.Empty:
-            #             pass
-            #         except Exception as ex:
-            #             logger.error("error handling command - '{}'".format(ex))
-            #     try:
-            #         Client.disconnect(self.__device)
-            #     except AttributeError:
-            #         DevicePool.remove(self.__device)
-            # else:
-            #     self.__mqtt_client.disconnect()
-            #     logger.error("could not get device state for '{}'".format(self.__device.id))
-
     def __trigger_device_state(self):
         payload = {
             "msg": "REQUEST-CURRENT-STATE",
