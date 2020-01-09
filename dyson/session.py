@@ -17,6 +17,7 @@
 
 from .configuration import config
 from .logger import root_logger
+from .util import LockingDict
 from libpurecoollink.utils import decrypt_password
 import paho.mqtt.client as mqtt
 import time, json, threading, queue, typing, cc_lib
@@ -43,7 +44,7 @@ class Session(threading.Thread):
         self.__discon_count = 0
         self.__stop = False
         self.__sensor_trigger = threading.Thread(target=self.__trigger_sensor_data, name="-Sensor-Trigger".format(self.name), daemon=True)
-        self.__device_state = dict()
+        self.__device_state = LockingDict()
 
     def stop(self):
         if not self.__stop:
