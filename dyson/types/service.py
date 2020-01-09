@@ -30,7 +30,7 @@ class SetPower(cc_lib.types.Service):
     @staticmethod
     def task(device, power: bool):
         if power:
-            err = device.session.setState({"fmod": "ON"})
+            err = device.session.setState({"fmod": "FAN"})
         else:
             err = device.session.setState({"fmod": "OFF"})
         if err:
