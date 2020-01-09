@@ -27,6 +27,16 @@ logger = root_logger.getChild(__name__.split(".", 1)[-1])
 class SetPower(cc_lib.types.Service):
     local_id = "setPower"
 
+    @staticmethod
+    def task(device, power: bool):
+        if power:
+            err = device.session.setState({"fmod": "ON"})
+        else:
+            err = device.session.setState({"fmod": "OFF"})
+        if err:
+            logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, err))
+        return {"status": 1 if err else 0}
+
 
 class SetOscillation(cc_lib.types.Service):
     local_id = "setOscillation"
