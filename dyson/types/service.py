@@ -55,3 +55,9 @@ class SetOscillation(cc_lib.types.Service):
 class SetSpeed(cc_lib.types.Service):
     local_id = "setSpeed"
 
+    @staticmethod
+    def task(device, speed: int):
+        err = device.session.setState({"fnsp": "{:04d}".format(speed)})
+        if err:
+            logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, err))
+        return {"status": 1 if err else 0}
