@@ -86,6 +86,13 @@ class Session(threading.Thread):
             return "error setting state for '{}' - {}".format(self.__device_id, ex)
         return False
 
+    def connect_device_to_platform(self):
+        if self.__mqtt_client.is_connected():
+            try:
+                self.__client.connectDevice(self.__device_id)
+            except (cc_lib.client.DeviceConnectError, cc_lib.client.NotConnectedError):
+                pass
+
     def run(self):
         logger.info("starting session for '{}' ...".format(self.__device_id))
         while True:
@@ -168,10 +175,7 @@ class Session(threading.Thread):
             logger.info("connected to '{}'".format(self.__device_id))
             self.__mqtt_client.subscribe("{}/{}/status/current".format(self.__model_num, self.__device_id))
             self.__trigger_device_state()
-            try:
-                self.__client.connectDevice(self.__device_id)
-            except (cc_lib.client.DeviceConnectError, cc_lib.client.NotConnectedError):
-                pass
+            self.connect_device_to_platform()
         else:
             logger.error("could not connect to '{}' - {}".format(self.__device_id, mqtt.connack_string(rc)))
 
