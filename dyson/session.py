@@ -147,7 +147,22 @@ class Session(threading.Thread):
         logger.debug("sensor trigger for '{}' stopped".format(self.__device_id))
 
     def __on_message(self, client, userdata, message: mqtt.MQTTMessage):
-        logger.debug(message.payload)
+        try:
+            payload = json.loads(message.payload)
+            if payload["msg"] == "CURRENT-STATE":
+                if not self.__device_state:
+                    self.__device_state.update(payload["product-state"])
+                    logger.debug("got initial state for '{}'".format(self.__device_id))
+            elif payload["msg"] == "STATE-CHANGE":
+                self.__device_state.update({key :value[1] for key, value in payload["product-state"].items()})
+                logger.debug("got new state for '{}'".format(self.__device_id))
+            elif payload["msg"] == "ENVIRONMENTAL-CURRENT-SENSOR-DATA":
+                if self.__device_state.get("rhtm") == "ON":
+                    self.__pushSensorData(payload["data"])
+            else:
+                logger.warning("received unknown message type from '{}' - '{}'".format(self.__device_id, payload["msg"]))
+        except Exception as ex:
+            logger.error("failed parse message from '{}' - {}".format(self.__device_id, ex))
 
     def __on_connect(self, client, userdata, flags, rc):
         if rc == 0:
