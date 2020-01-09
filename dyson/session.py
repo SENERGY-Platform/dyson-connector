@@ -128,7 +128,7 @@ class Session(threading.Thread):
             "msg": "REQUEST-CURRENT-STATE",
             "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         }
-        self.__mqtt_client.publish('{}/{}/command'.format(self.__model_num, self.__device_id), json.dumps(payload))
+        self.__mqtt_client.publish('{}/{}/command'.format(self.__model_num, self.__device_id), json.dumps(payload), 1)
 
     def __trigger_sensor_data(self):
         logger.debug("starting sensor trigger for '{}' ...".format(self.__device_id))
