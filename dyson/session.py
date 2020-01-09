@@ -80,6 +80,8 @@ class Session(threading.Thread):
         while True:
             try:
                 self.__mqtt_client.connect(self.__ip, self.__port, keepalive=config.Session.keepalive)
+                if not self.__sensor_trigger.is_alive():
+                    self.__sensor_trigger.start()
             except Exception as ex:
                 logger.error("could not connect to '{}' at '{}' on '{}' - {}".format(self.__device_id, self.__ip, self.__port, ex))
             try:
@@ -90,6 +92,7 @@ class Session(threading.Thread):
                 break
             else:
                 time.sleep(2)
+        self.__sensor_trigger.join()
         logger.info("session for '{}' closed".format(self.__device_id))
 
             # self.init_state.wait(timeout=10)
