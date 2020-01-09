@@ -145,33 +145,6 @@ class Session(threading.Thread):
             else:
                 break
         logger.debug("sensor trigger for '{}' stopped".format(self.__device_id))
-    #
-    # def __on_message(self, client, userdata, message):
-    #     try:
-    #         message = json.loads(message.payload.decode())
-    #         if message['msg'] == 'ENVIRONMENTAL-CURRENT-SENSOR-DATA':
-    #             for reading in self.__device.parseEnvironmentSensors(message):
-    #                 Client.event(
-    #                     self.__device,
-    #                     reading[0],
-    #                     json.dumps({
-    #                         'value': reading[1],
-    #                         'unit': reading[2],
-    #                         'time': reading[3]
-    #                     }),
-    #                     block=False
-    #                 )
-    #                 time.sleep(0.1)
-    #         elif message['msg'] == 'CURRENT-STATE':
-    #             self.__device.state = message.get('product-state')
-    #             if not self.init_state.is_set():
-    #                 self.init_state.set()
-    #         elif message['msg'] == 'STATE-CHANGE':
-    #             self.__device.updateState(message.get('product-state'))
-    #         else:
-    #             logger.warning("unknown message: '{}'".format(message))
-    #     except Exception as ex:
-    #         logger.error("malformed message: '{}'".format(ex))
 
     def __on_message(self, client, userdata, message: mqtt.MQTTMessage):
         logger.debug(message.payload)
