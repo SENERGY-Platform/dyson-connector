@@ -56,6 +56,25 @@ class Session(threading.Thread):
             self.__mqtt_client.disconnect()
             self.join()
 
+    def setState(self, state):
+        if not self.__mqtt_client.is_connected():
+            return "not connected to '{}'".format(self.__device_id)
+        if not self.__device_state:
+            return "device '{}' not ready".format(self.__device_id)
+        try:
+            device_state = self.__device_state.copy()
+            device_state.update(state)
+            payload = {
+                "msg": "STATE-SET",
+                "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "mode-reason": "LAPP",
+                "data": device_state
+            }
+            self.__mqtt_client.publish('{}/{}/command'.format(self.__model_num, self.__device_id), json.dumps(payload), 1)
+        except Exception as ex:
+            return "error setting state for '{}' - {}".format(self.__device_id, ex)
+        return False
+
     def run(self):
         logger.info("starting session for '{}' ...".format(self.__device_id))
         while True:
