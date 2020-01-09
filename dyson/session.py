@@ -133,7 +133,8 @@ class Session(threading.Thread):
     def __trigger_sensor_data(self):
         logger.debug("starting sensor trigger for '{}' ...".format(self.__device_id))
         while True:
-            if self.__mqtt_client.is_connected():
+            if self.__mqtt_client.is_connected() and self.__device_state.get("rhtm") == "ON":
+                logger.debug("triggering sensor data for '{}'".format(self.__device_id))
                 payload = {
                     "msg": "REQUEST-PRODUCT-ENVIRONMENT-CURRENT-SENSOR-DATA",
                     "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
