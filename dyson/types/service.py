@@ -41,6 +41,16 @@ class SetPower(cc_lib.types.Service):
 class SetOscillation(cc_lib.types.Service):
     local_id = "setOscillation"
 
+    @staticmethod
+    def task(device, oscillation: bool):
+        if oscillation:
+            err = device.session.setState({"oson": "ON"})
+        else:
+            err = device.session.setState({"oson": "OFF"})
+        if err:
+            logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, err))
+        return {"status": 1 if err else 0}
+
 
 class SetSpeed(cc_lib.types.Service):
     local_id = "setSpeed"
