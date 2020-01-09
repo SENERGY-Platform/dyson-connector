@@ -52,6 +52,7 @@ class DysonConf:
         sensor_interval = 10
         keepalive = 5
         logging = False
+        max_command_age = 180
 
     @section
     class RuntimeEnv:
