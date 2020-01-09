@@ -55,6 +55,17 @@ class Session(threading.Thread):
             self.__mqtt_client.disconnect()
             self.join()
 
+    def __cleanState(self, state):
+        odd_keys = ['filf', 'fnst', 'ercd', 'wacd']
+        missing_keys = {'sltm': 'STET', 'rstf': 'STET'}
+        for key in odd_keys:
+            try:
+                del state[key]
+            except KeyError:
+                pass
+        for key, value in missing_keys.items():
+            state[key] = value
+
     def setState(self, state):
         if not self.__mqtt_client.is_connected():
             return "not connected to '{}'".format(self.__device_id)
@@ -63,6 +74,7 @@ class Session(threading.Thread):
         try:
             device_state = self.__device_state.copy()
             device_state.update(state)
+            self.__cleanState(device_state)
             payload = {
                 "msg": "STATE-SET",
                 "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
