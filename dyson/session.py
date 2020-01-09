@@ -146,6 +146,22 @@ class Session(threading.Thread):
                 break
         logger.debug("sensor trigger for '{}' stopped".format(self.__device_id))
 
+    def __pushSensorData(self, data):
+        try:
+            del data["sltm"]
+        except KeyError:
+            pass
+        if all(val not in ("OFF", "INIT") for val in data.values()):
+            envelope = cc_lib.client.message.EventEnvelope(
+                device=self.__device_id,
+                service=self.__push_sensor_data_service.local_id,
+                message=cc_lib.client.message.Message(json.dumps(self.__push_sensor_data_service.task(data)))
+
+            )
+            logger.debug(envelope)
+        else:
+            logger.debug("sensors of '{}' not ready".format(self.__device_id))
+
     def __on_message(self, client, userdata, message: mqtt.MQTTMessage):
         try:
             payload = json.loads(message.payload)
