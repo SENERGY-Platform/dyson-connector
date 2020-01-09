@@ -19,8 +19,7 @@ from ..configuration import config
 from ..logger import root_logger
 from ..device_manager import DeviceManager
 from ..session import Session
-# from .session import SessionManager
-from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf, get_all_addresses
+# from libpurecoollink.zeroconf import ServiceBrowser, Zeroconf, get_all_addresses
 import time, threading, cc_lib, socket, os, platform, subprocess
 
 
