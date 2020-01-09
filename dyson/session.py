@@ -45,6 +45,10 @@ class Session(threading.Thread):
         self.__stop = False
         self.__sensor_trigger = threading.Thread(target=self.__trigger_sensor_data, name="-Sensor-Trigger".format(self.name), daemon=True)
         self.__device_state = LockingDict()
+        self.__push_sensor_data_service = None
+
+    def setSensorDataService(self, service):
+        self.__push_sensor_data_service = service
 
     def stop(self):
         if not self.__stop:
