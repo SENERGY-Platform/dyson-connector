@@ -66,6 +66,9 @@ class Session(threading.Thread):
         for key, value in missing_keys.items():
             state[key] = value
 
+    def getState(self):
+        return self.__device_state.copy()
+
     def setState(self, state):
         if not self.__mqtt_client.is_connected():
             return "not connected to '{}'".format(self.__device_id)
