@@ -136,7 +136,7 @@ class Session(threading.Thread):
                 break
         logger.debug("sensor trigger for '{}' stopped".format(self.__device_id))
 
-    def __pushSensorData(self, data):
+    def __pushSensorData(self, data, timestamp):
         try:
             del data["sltm"]
         except KeyError:
@@ -145,7 +145,7 @@ class Session(threading.Thread):
             envelope = cc_lib.client.message.EventEnvelope(
                 device=self.__device_id,
                 service=self.__push_sensor_data_service.local_id,
-                message=cc_lib.client.message.Message(json.dumps(self.__push_sensor_data_service.task(data)))
+                message=cc_lib.client.message.Message(json.dumps(self.__push_sensor_data_service.task(data, timestamp)))
             )
             self.__client.emmitEvent(envelope, asynchronous=True)
         else:
@@ -163,7 +163,7 @@ class Session(threading.Thread):
                 logger.debug("got new state for '{}'".format(self.__device_id))
             elif payload["msg"] == "ENVIRONMENTAL-CURRENT-SENSOR-DATA":
                 if self.__device_state.get("rhtm") == "ON":
-                    self.__pushSensorData(payload["data"])
+                    self.__pushSensorData(payload["data"], payload["time"])
             else:
                 logger.warning("received unknown message type from '{}' - '{}'".format(self.__device_id, payload["msg"]))
         except Exception as ex:
