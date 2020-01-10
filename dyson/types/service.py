@@ -81,7 +81,8 @@ class GetSensorReadings(cc_lib.types.Service):
     local_id = "getSensorReadings"
 
     @staticmethod
-    def task(readings):
+    def task(readings, timestamp):
         for key, value in readings.items():
             readings[key] = int(value)
+        readings["time"] = timestamp
         return readings
