@@ -19,7 +19,7 @@ from .configuration import config
 from .logger import root_logger
 from .util import LockingDict, decrypt_password
 import paho.mqtt.client as mqtt
-import time, json, threading, queue, typing, cc_lib
+import time, json, threading, cc_lib
 
 
 logger = root_logger.getChild(__name__.split(".", 1)[-1])
