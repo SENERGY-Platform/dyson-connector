@@ -14,7 +14,7 @@
    limitations under the License.
 """
 
-__all__ = ('SetPower', 'SetOscillation', 'SetSpeed', 'SetMonitoring', 'GetSensorReadings')
+__all__ = ('SetPower', 'SetOscillation', 'SetSpeed', 'SetMonitoring', 'GetSensorReadings', 'GetDeviceState')
 
 
 from ..logger import root_logger
