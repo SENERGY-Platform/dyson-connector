@@ -18,13 +18,13 @@ __all__ = ('device_type_map', 'DysonPureCoolLink')
 
 
 from ..configuration import config
-from .service import SetPower, SetOscillation, SetSpeed, SetMonitoring, GetSensorReadings
+from .service import SetPower, SetOscillation, SetSpeed, SetMonitoring, GetSensorReadings, GetDeviceState
 import cc_lib
 
 
 class DysonPureCoolLink(cc_lib.types.Device):
     device_type_id = config.Senergy.dt_pure_cool_link
-    services = (SetPower, SetOscillation, SetSpeed, SetMonitoring, GetSensorReadings)
+    services = (SetPower, SetOscillation, SetSpeed, SetMonitoring, GetSensorReadings, GetDeviceState)
     model_num = "475"
 
     def __init__(self, id: str, pw: str, name: str):
