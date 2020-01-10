@@ -147,7 +147,7 @@ class Session(threading.Thread):
                 service=self.__push_sensor_data_service.local_id,
                 message=cc_lib.client.message.Message(json.dumps(self.__push_sensor_data_service.task(data)))
             )
-            logger.debug(envelope)
+            self.__client.emmitEvent(envelope, asynchronous=True)
         else:
             logger.debug("sensors of '{}' not ready".format(self.__device_id))
 
