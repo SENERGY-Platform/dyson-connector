@@ -121,7 +121,7 @@ class GetDeviceState(cc_lib.types.Service):
                 payload["oscillation"] = GetDeviceState.value_map[state["oson"]]
                 payload["speed"] = 0 if state["fnsp"] == "AUTO" else int(state["fnsp"])
                 payload["monitoring"] = GetDeviceState.value_map[state["rhtm"]]
-                payload["filter_life"] = int(state["filf"])
+                payload["filter_life"] = round(int(state["filf"]) / 4300 * 100, 2)
             except KeyError as ex:
                 logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, ex))
                 payload["status"] = 1
