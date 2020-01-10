@@ -18,7 +18,7 @@ __all__ = ('SetPower', 'SetOscillation', 'SetSpeed', 'SetMonitoring', 'GetSensor
 
 
 from ..logger import root_logger
-import cc_lib
+import datetime, cc_lib
 
 
 logger = root_logger.getChild(__name__.split(".", 1)[-1])
@@ -86,3 +86,40 @@ class GetSensorReadings(cc_lib.types.Service):
             readings[key] = int(value)
         readings["time"] = timestamp
         return readings
+
+
+class GetDeviceState(cc_lib.types.Service):
+    local_id = "getDeviceState"
+    value_map = {
+        "FAN": True,
+        "AUTO": True,
+        "ON": True,
+        "OFF": False,
+    }
+
+    @staticmethod
+    def task(device):
+        payload = {
+            "status": 0,
+            "power": False,
+            "oscillation": False,
+            "speed": 1,
+            "monitoring": False,
+            "filter_life": 0,
+            "time": "{}Z".format(datetime.datetime.utcnow().isoformat())
+        }
+        state = device.session.getState()
+        if not state:
+            logger.error("'{}' for '{}' failed - device state not available".format(__class__.__name__, device.id))
+            payload["status"] = 1
+        else:
+            try:
+                payload["power"] = GetDeviceState.value_map[state["fmod"]]
+                payload["oscillation"] = GetDeviceState.value_map[state["oson"]]
+                payload["speed"] = 0 if state["fnsp"] == "AUTO" else int(state["fnsp"])
+                payload["monitoring"] = GetDeviceState.value_map[state["rhtm"]]
+                payload["filter_life"] = int(state["filf"])
+            except KeyError as ex:
+                logger.error("'{}' for '{}' failed - {}".format(__class__.__name__, device.id, ex))
+                payload["status"] = 1
+        return payload
