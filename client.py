@@ -15,12 +15,11 @@
 """
 
 
-from dyson.configuration import config
 from dyson.device_manager import DeviceManager
 from dyson.discovery.cloud_monitor import CloudMonitor
 from dyson.discovery.local_monitor import LocalMonitor
-import time, json, cc_lib
 from dyson.router import commandRouter
+import time, cc_lib
 
 
 device_manager = DeviceManager()
