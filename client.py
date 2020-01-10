@@ -20,9 +20,6 @@ from dyson.device_manager import DeviceManager
 from dyson.discovery.cloud_monitor import CloudMonitor
 from dyson.discovery.local_monitor import LocalMonitor
 import time, json, cc_lib
-
-
-logger = root_logger.getChild(__name__)
 from dyson.router import commandRouter
 
 
