@@ -83,7 +83,10 @@ class GetSensorReadings(cc_lib.types.Service):
     @staticmethod
     def task(readings, timestamp):
         for key, value in readings.items():
-            readings[key] = int(value)
+            if key == "tact":
+                readings[key] = int(value) / 10
+            else:
+                readings[key] = int(value)
         readings["time"] = timestamp
         return readings
 
