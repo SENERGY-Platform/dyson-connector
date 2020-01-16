@@ -98,7 +98,7 @@ def probeHost(host, port) -> bool:
         s.connect((host, port))
         s.close()
         return True
-    except (ConnectionError, TimeoutError, socket.timeout):
+    except OSError:
         return False
 
 def validateHostsWorker(hosts, valid_hosts):
