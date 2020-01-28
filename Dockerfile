@@ -16,4 +16,4 @@ COPY . .
 RUN mkdir cc-lib
 RUN mkdir storage
 
-CMD [ "python", "./client.py"]
+CMD [ "python", "-u", "./client.py"]
