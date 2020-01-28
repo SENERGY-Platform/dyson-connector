@@ -15,11 +15,18 @@
 """
 
 
+from dyson.configuration import config
 from dyson.device_manager import DeviceManager
 from dyson.discovery.cloud_monitor import CloudMonitor
 from dyson.discovery.local_monitor import LocalMonitor
 from dyson.router import commandRouter
-import time, cc_lib
+import time, random, cc_lib
+
+
+if config.RuntimeEnv.max_start_delay > 0:
+    delay = random.randint(1, config.RuntimeEnv.max_start_delay)
+    print("delaying start for {}s".format(delay))
+    time.sleep(delay)
 
 
 device_manager = DeviceManager()
