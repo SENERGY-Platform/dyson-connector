@@ -101,6 +101,9 @@ class CloudMonitor(Thread):
             futures = list()
             for device_id in missing_devices:
                 logger.info("can't find '{}'".format(device_id))
+                device = self.__device_manager.get(device_id)
+                if device.session:
+                    device.session.stop()
                 futures.append((device_id, self.__client.deleteDevice(device_id, asynchronous=True)))
             for device_id, future in futures:
                 future.wait()
