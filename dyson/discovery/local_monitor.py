@@ -193,9 +193,12 @@ class LocalMonitor(threading.Thread):
         if missing_devices:
             for device_id in missing_devices:
                 logger.info("can't find '{}' at '{}'".format(device_id, self.__devices_cache[device_id]))
-                device = self.__device_manager.get(device_id)
-                device.session.stop()
-                device.session = None
+                try:
+                    device = self.__device_manager.get(device_id)
+                    device.session.stop()
+                    device.session = None
+                except KeyError:
+                    pass
         if new_devices:
             for device_id in new_devices:
                 logger.info("found '{}' at '{}' on '{}'".format(device_id, discovered_devices[device_id][0], discovered_devices[device_id][1]))
