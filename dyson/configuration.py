@@ -33,7 +33,7 @@ class DysonConf:
 
     @section
     class Cloud:
-        host = "api.cp.dyson.com"
+        host = "appapi.cp.dyson.com"
         auth_endpt = "v1/userregistration/authenticate?country="
         provisioning_endpt = "v1/provisioningservice/manifest"
         poll_interval = 300
